@@ -36,17 +36,19 @@ class Repository:
             self.__remote = self.__git.remote("origin")
 
             if self.supported:
-
-                def resolve_match(match: Optional[re.Match[str]], index: int) -> str:
-                    return match.group(index) if match else ""
-
-                # This can use some more error handling
-                match = re.search("^codecommit::(.*)://(.*)@(.*)$", self.__remote)
-                self.__aws_region = resolve_match(match, 1)
-                self.__aws_profile = resolve_match(match, 2)
-                self.__repository_name = resolve_match(match, 3)
+                self.__extract_from_remote(self.__remote)
 
         return self.__remote
+
+    def __extract_from_remote(self, remote: str) -> None:
+        def resolve(resolver: Optional[re.Match], index: int) -> str:
+            return resolver.group(index) if resolver else ""
+
+        # This can use some more error handling
+        match = re.search(r"^codecommit::(.*)://(.*)@(.*)$", remote)
+        self.__aws_region = resolve(match, 1)
+        self.__aws_profile = resolve(match, 2)
+        self.__repository_name = resolve(match, 3)
 
     @property
     def aws_region(self) -> str:
