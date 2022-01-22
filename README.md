@@ -67,3 +67,9 @@ To use `pull-request-codecommit` you just execute the following command:
 ```bash
 pull-request-codecommit
 ```
+
+## Testing locally
+
+```bash
+./create_repo.sh
+```

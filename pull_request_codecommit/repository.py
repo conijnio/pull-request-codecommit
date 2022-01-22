@@ -1,9 +1,9 @@
 import os
 import re
-from typing import Optional
+from typing import Optional, Tuple
 
 from .config import Config
-from .git_client import GitClient
+from .git import Client
 
 
 class Repository:
@@ -21,7 +21,7 @@ class Repository:
         if not path:
             path = os.getcwd()
 
-        self.__git = GitClient(path)
+        self.__git = Client(path)
 
     def __config(self, method: str) -> Optional[str]:
         return getattr(Config, method)(self.aws_profile)
@@ -69,28 +69,30 @@ class Repository:
 
         return self.__branch
 
-    def create_pull_request(self):
+    @property
+    def destination(self) -> str:
+        destination = self.__config("destination_branch")
+        return destination if destination else ""
+
+    def pull_request_information(self) -> Tuple[str, str]:
+        commits = self.__git.get_commit_messages(destination_branch=self.destination)
+
+        issues = ", ".join(commits.issues)
+        description = list(map(lambda commit: commit.message.subject, commits))
+        if issues:
+            description.append(f"\nIssues: {issues}")
+
+        title = f"{commits.first.message.subject} ({issues})"
+        return title, "\n".join(description)
+
+    def create_pull_request(self, title: str, description: str) -> str:
         """
-        TODO:
-            - We need to list all changes between the destination and current branch and create a comprehensive message.
-            - Extract a possible JIRA issue from the commit message
-            - Do we want to display ask for a confirmation?
-            - Show an aggregated overview on what happened
-
-        RESPONSE=$(AWS_PROFILE=${AWS_PROFILE} aws codecommit create-pull-request \
-          --region ${AWS_REGION} \
-          --title "${TITLE}" \
-          --description "${DESCRIPTION}" \
-          --targets repositoryName=${REPOSITORY},sourceReference=${BRANCH},destinationReference=development)
-
+        RESPONSE =$(AWS_PROFILE=${AWS_PROFILE} aws codecommit create-pull-request \
+            --region ${AWS_REGION} \
+            --title "${TITLE}" \
+            --description "${DESCRIPTION}" \
+            --targets repositoryName=${REPOSITORY}, sourceReference=${BRANCH}, destinationReference=development)
         """
-        print(f"Create PR from {self.branch} to {self.__config('destination_branch')}")
-        pass
-
-    # def cleanup(self):
-    #     """
-    #     git checkout development
-    #     git pull
-    #     git branch -d ${BRANCH}
-    #     """
-    #     pass
+        tmp = self.branch
+        pull_request_id = 1
+        return f"https://{self.__aws_region}.console.aws.amazon.com/codesuite/codecommit/repositories/{self.repository_name}/pull-requests/{pull_request_id}/details?region={self.__aws_region}"

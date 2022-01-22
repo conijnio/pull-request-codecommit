@@ -1,9 +1,11 @@
+from __future__ import annotations
+from typing import List
 import os.path
 import subprocess
-from typing import List
+from .commits import Commits
 
 
-class GitClient:
+class Client:
     """
     Understands git operations
     """
@@ -26,3 +28,10 @@ class GitClient:
     @property
     def current_branch(self) -> str:
         return self.__execute(["branch", "--show-current"])
+
+    def get_commit_messages(self, destination_branch: str) -> Commits:
+        messages = self.__execute(
+            ["log", f"{destination_branch}..{self.current_branch}"]
+        )
+
+        return Commits(messages)
