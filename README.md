@@ -8,6 +8,11 @@
 
 > Note, this project is still under development and is not functional yet!
 
+## Todo list
+
+- Check if the latest changes are pushed
+- Validate that the there is no PR open yet
+
 This tool makes it easy to create pull requests for [AWS CodeCommit](https://aws.amazon.com/codecommit/). It relies on the
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) standard. It looks at the git commits between the
 current and the destination branch. Then it tries to create a pull request with this information as input.

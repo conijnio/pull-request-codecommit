@@ -3,7 +3,8 @@ import re
 from typing import Optional, Tuple
 
 from .config import Config
-from .git import Client
+from .git import Client as GitClient
+from .aws import Client as AwsClient
 
 
 class Repository:
@@ -21,7 +22,7 @@ class Repository:
         if not path:
             path = os.getcwd()
 
-        self.__git = Client(path)
+        self.__git = GitClient(path)
 
     def __config(self, method: str) -> Optional[str]:
         return getattr(Config, method)(self.aws_profile)
@@ -75,24 +76,25 @@ class Repository:
         return destination if destination else ""
 
     def pull_request_information(self) -> Tuple[str, str]:
+        title_postfix = ""
         commits = self.__git.get_commit_messages(destination_branch=self.destination)
 
         issues = ", ".join(commits.issues)
         description = list(map(lambda commit: commit.message.subject, commits))
         if issues:
             description.append(f"\nIssues: {issues}")
+            title_postfix = f" ({issues})"
 
-        title = f"{commits.first.message.subject} ({issues})"
+        title = f"{commits.first.message.subject}{title_postfix}"
         return title, "\n".join(description)
 
     def create_pull_request(self, title: str, description: str) -> str:
-        """
-        RESPONSE =$(AWS_PROFILE=${AWS_PROFILE} aws codecommit create-pull-request \
-            --region ${AWS_REGION} \
-            --title "${TITLE}" \
-            --description "${DESCRIPTION}" \
-            --targets repositoryName=${REPOSITORY}, sourceReference=${BRANCH}, destinationReference=development)
-        """
-        tmp = self.branch
-        pull_request_id = 1
-        return f"https://{self.__aws_region}.console.aws.amazon.com/codesuite/codecommit/repositories/{self.repository_name}/pull-requests/{pull_request_id}/details?region={self.__aws_region}"
+        client = AwsClient(profile=self.__aws_profile, region=self.__aws_region)
+        response = client.create_pull_request(
+            title=title,
+            description=description,
+            repository=self.repository_name,
+            source=self.branch,
+            destination=self.destination,
+        )
+        return f"https://{self.__aws_region}.console.aws.amazon.com/codesuite/codecommit/repositories/{self.repository_name}/pull-requests/{response.get('pullRequestId')}/details?region={self.__aws_region}"

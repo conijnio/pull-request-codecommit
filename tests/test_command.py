@@ -1,3 +1,4 @@
+import json
 from io import TextIOWrapper, BytesIO
 from unittest.mock import patch, MagicMock
 
@@ -42,11 +43,13 @@ def edit_message(message: str) -> str:
         ),
     ],
 )
-@patch("pull_request_codecommit.repository.Client")
+@patch("pull_request_codecommit.aws.client.subprocess.run")
+@patch("pull_request_codecommit.repository.GitClient")
 @patch("pull_request_codecommit.click.edit")
 def test_invoke(
     mock_edit: MagicMock,
     mock_git_client: MagicMock,
+    mock_aws_client: MagicMock,
     region: str,
     profile: str,
     config: bytes,
@@ -60,6 +63,15 @@ def test_invoke(
     )
     mock_git_client.return_value.current_branch.return_value = "feat/my-feature"
     configparser.open = MagicMock(return_value=TextIOWrapper(BytesIO(config)))  # type: ignore
+
+    def execute(parameters, stdout):
+        assert -1 == stdout
+        mock_stdout = MagicMock()
+        data = {"pullRequest": {"pullRequestId": 1}}
+        mock_stdout.stdout = bytes(json.dumps(data), "utf-8")
+        return mock_stdout
+
+    mock_aws_client.side_effect = execute
 
     runner = CliRunner()
     result = runner.invoke(main, [])
@@ -91,11 +103,13 @@ def test_invoke(
         ),
     ],
 )
-@patch("pull_request_codecommit.repository.Client")
+@patch("pull_request_codecommit.aws.client.subprocess.run")
+@patch("pull_request_codecommit.repository.GitClient")
 @patch("pull_request_codecommit.click.edit")
 def test_invoke_with_path(
     mock_edit: MagicMock,
     mock_git_client: MagicMock,
+    mock_aws_client: MagicMock,
     region: str,
     profile: str,
     config: bytes,
@@ -107,12 +121,21 @@ def test_invoke_with_path(
     mock_git_client.return_value.current_branch.return_value = "feat/my-feature"
     configparser.open = MagicMock(return_value=TextIOWrapper(BytesIO(config)))  # type: ignore
 
+    def execute(parameters, stdout):
+        assert -1 == stdout
+        mock_stdout = MagicMock()
+        data = {"pullRequest": {"pullRequestId": 1}}
+        mock_stdout.stdout = bytes(json.dumps(data), "utf-8")
+        return mock_stdout
+
+    mock_aws_client.side_effect = execute
+
     runner = CliRunner()
     result = runner.invoke(main, ["--repository-path", "./some/path/to/repo"])
     assert result.exit_code == 0
 
 
-@patch("pull_request_codecommit.repository.Client")
+@patch("pull_request_codecommit.repository.GitClient")
 def test_invoke_github(mock_git_client: MagicMock) -> None:
     mock_git_client.return_value.remote.return_value = (
         "git@github.com:Nr18/pull-request-codecommit.git"
@@ -124,7 +147,7 @@ def test_invoke_github(mock_git_client: MagicMock) -> None:
     assert result.exit_code == 1
 
 
-@patch("pull_request_codecommit.repository.Client")
+@patch("pull_request_codecommit.repository.GitClient")
 @patch("pull_request_codecommit.click.edit")
 def test_invoke_quit_edit(
     mock_edit: MagicMock,
