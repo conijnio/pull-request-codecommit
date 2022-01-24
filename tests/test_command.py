@@ -78,6 +78,28 @@ def test_invoke(
     assert result.exit_code == 0
 
 
+@patch("pull_request_codecommit.repository.GitClient")
+@patch("pull_request_codecommit.click.edit")
+def test_invoke_no_commits(
+    mock_edit: MagicMock,
+    mock_git_client: MagicMock,
+) -> None:
+    mock_edit.side_effect = edit_message
+    mock_git_client.return_value.get_commit_messages.return_value = Commits("")
+
+    mock_git_client.return_value.remote.return_value = (
+        f"codecommit::eu-west-1://my-profile@my-repository"
+    )
+    mock_git_client.return_value.current_branch.return_value = "feat/my-feature"
+    config = b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master"
+    configparser.open = MagicMock(return_value=TextIOWrapper(BytesIO(config)))  # type: ignore
+
+    runner = CliRunner()
+    result = runner.invoke(main, [])
+    assert result.exit_code == 0
+    assert "There are no differences between" in result.output
+
+
 @pytest.mark.parametrize(
     "region, profile, config",
     [

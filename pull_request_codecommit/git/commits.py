@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 import re
 
 from .commit import Commit
@@ -26,8 +26,8 @@ class Commits:
         self.__commits.reverse()
 
     @property
-    def first(self) -> Commit:
-        return self.__commits[0]
+    def first(self) -> Optional[Commit]:
+        return self.__commits[0] if self.__commits else None
 
     def __iter__(self):
         """

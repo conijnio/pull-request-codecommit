@@ -75,9 +75,12 @@ class Repository:
         destination = self.__config("destination_branch")
         return destination if destination else ""
 
-    def pull_request_information(self) -> Tuple[str, str]:
+    def pull_request_information(self) -> Optional[Tuple[str, str]]:
         title_postfix = ""
         commits = self.__git.get_commit_messages(destination_branch=self.destination)
+
+        if not commits.first:
+            return None
 
         issues = ", ".join(commits.issues)
         description = list(map(lambda commit: commit.message.subject, commits))
