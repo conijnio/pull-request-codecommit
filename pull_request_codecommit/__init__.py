@@ -24,13 +24,13 @@ def main(repository_path: Optional[str]) -> None:
     click.echo()
     pull_request = repo.pull_request_information()
 
-    if not pull_request:
+    if not pull_request.has_changes:
         click.echo(
             f"There are no differences between {repo.destination} and {repo.branch}!"
         )
         exit(0)
 
-    message = click.edit(f"{pull_request[0]}\n\n{pull_request[1]}")
+    message = click.edit(f"{pull_request.title}\n\n{pull_request.description}")
 
     if message is None:
         raise click.ClickException("Pull request was not created")
