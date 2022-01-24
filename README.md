@@ -31,14 +31,6 @@ source .venv/bin/activate
 pip install pull_request_codecommit
 ```
 
-## Alternative installation: Docker
-
-Build the docker image
-
-```bash
-docker build -t pull-request-codecommit-docker .
-```
-
 ## Configuration
 
 The tool uses the following file `~/.aws/pull-request-codecommit`. It will first load the `default` profile and then, if
@@ -50,14 +42,6 @@ branch=main
 
 [profile acme-profile]
 branch=develop
-```
-
-#### Docker usage
-
-Run the `pull-request-codecommit` command as follows
-
-```bash
-docker run --rm -it -v `pwd`:/tests pull-request-codecommit-docker pull-request-codecommit
 ```
 
 ## Usage
