@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pull-request-codecommit"
-version = "0.0.1"
+version = "0.1.0"
 description = "pull-request-codecommit creates a PR within CodeCommit based on your commit messages."
 authors = ["Joris Conijn <joris@conijnonline.nl>"]
 license = "MIT"
