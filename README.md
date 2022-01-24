@@ -4,9 +4,13 @@
 [![Maintenance](https://img.shields.io/badge/Maintained-yes-green.svg)](https://github.com/Nr18/pull-request-codecommit/graphs/commit-activity)
 [![GitHub release](https://img.shields.io/github/release/Nr18/pull-request-codecommit.svg)](https://github.com/Nr18/pull-request-codecommit/releases/)
 [![Continuous Integration](https://github.com/Nr18/pull-request-codecommit/actions/workflows/ci.yml/badge.svg)](https://github.com/Nr18/pull-request-codecommit/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/Nr18/pull-request-codecommit/branch/main/graph/badge.svg?token=RMPJ8DBMKZ)](https://codecov.io/gh/Nr18/pull-request-codecommit)
+[![codecov](https://codecov.io/gh/Nr18/pull-request-codecommit/branch/main/graph/badge.svg?token=H6zsiLbNjP)](https://codecov.io/gh/Nr18/pull-request-codecommit)
 
-TODO
+> Note, this project is still under development and is not functional yet!
+
+This tool makes it easy to create pull requests for [AWS CodeCommit](https://aws.amazon.com/codecommit/). It relies on the
+[Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) standard. It looks at the git commits between the
+current and the destination branch. Then it tries to create a pull request with this information as input.
 
 ## Installation
 
@@ -27,20 +31,17 @@ source .venv/bin/activate
 pip install pull_request_codecommit
 ```
 
-## Alternative installation: Docker
+## Configuration
 
-Build the docker image
+The tool uses the following file `~/.aws/pull-request-codecommit`. It will first load the `default` profile and then, if
+provided the profile specific settings.
 
-```bash
-docker build -t pull-request-codecommit-docker .
-```
+```ini
+[profile default]
+branch=main
 
-#### Docker usage
-
-Run the `pull-request-codecommit` command as follows
-
-```bash
-docker run --rm -it -v `pwd`:/tests pull-request-codecommit-docker pull-request-codecommit
+[profile acme-profile]
+branch=develop
 ```
 
 ## Usage
@@ -49,4 +50,10 @@ To use `pull-request-codecommit` you just execute the following command:
 
 ```bash
 pull-request-codecommit
+```
+
+## Testing locally
+
+```bash
+./create_repo.sh
 ```
