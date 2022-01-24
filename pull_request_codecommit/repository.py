@@ -5,6 +5,7 @@ from typing import Optional, Tuple
 from .config import Config
 from .git import Client as GitClient
 from .aws import Client as AwsClient
+from .pull_request import PullRequest
 
 
 class Repository:
@@ -75,21 +76,9 @@ class Repository:
         destination = self.__config("destination_branch")
         return destination if destination else ""
 
-    def pull_request_information(self) -> Optional[Tuple[str, str]]:
-        title_postfix = ""
+    def pull_request_information(self) -> PullRequest:
         commits = self.__git.get_commit_messages(destination_branch=self.destination)
-
-        if not commits.first:
-            return None
-
-        issues = ", ".join(commits.issues)
-        description = list(map(lambda commit: commit.message.subject, commits))
-        if issues:
-            description.append(f"\nIssues: {issues}")
-            title_postfix = f" ({issues})"
-
-        title = f"{commits.first.message.subject}{title_postfix}"
-        return title, "\n".join(description)
+        return PullRequest(commits)
 
     def create_pull_request(self, title: str, description: str) -> str:
         client = AwsClient(profile=self.__aws_profile, region=self.__aws_region)

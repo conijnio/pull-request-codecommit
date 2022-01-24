@@ -42,7 +42,9 @@ class Commits:
 
     @property
     def issues(self) -> List[str]:
-        return list(set(map(lambda commit: commit.message.issue, self.__commits)))
+        return list(
+            set(filter(None, map(lambda commit: commit.message.issue, self.__commits)))
+        )
 
     @staticmethod
     def __read_commit_message(message: str) -> Commit:
