@@ -1,9 +1,8 @@
 import os
-import re
-from typing import Optional, Tuple
+from typing import Optional
 
 from .config import Config
-from .git import Client as GitClient
+from .git import Client as GitClient, Remote
 from .aws import Client as AwsClient
 from .pull_request import PullRequest
 
@@ -14,10 +13,7 @@ class Repository:
     """
 
     def __init__(self, path: Optional[str] = None) -> None:
-        self.__remote: str = ""
-        self.__aws_region: str = ""
-        self.__aws_profile: str = ""
-        self.__repository_name: str = ""
+        self.__remote: Optional[Remote] = None
         self.__branch: str = ""
 
         if not path:
@@ -26,43 +22,14 @@ class Repository:
         self.__git = GitClient(path)
 
     def __config(self, method: str) -> Optional[str]:
-        return getattr(Config, method)(self.aws_profile)
+        return getattr(Config, method)(self.remote.profile)
 
     @property
-    def supported(self) -> bool:
-        return self.remote.startswith("codecommit::")
-
-    @property
-    def remote(self) -> str:
+    def remote(self) -> Remote:
         if not self.__remote:
-            self.__remote = self.__git.remote("origin")
-
-            if self.supported:
-                self.__extract_from_remote(self.__remote)
+            self.__remote = Remote(self.__git.remote("origin"))
 
         return self.__remote
-
-    def __extract_from_remote(self, remote: str) -> None:
-        def resolve(resolver: Optional[re.Match], index: int) -> str:
-            return resolver.group(index) if resolver else ""
-
-        # This can use some more error handling
-        match = re.search(r"^codecommit::(.*)://(.*)@(.*)$", remote)
-        self.__aws_region = resolve(match, 1)
-        self.__aws_profile = resolve(match, 2)
-        self.__repository_name = resolve(match, 3)
-
-    @property
-    def aws_region(self) -> str:
-        return self.__aws_region
-
-    @property
-    def aws_profile(self) -> str:
-        return self.__aws_profile
-
-    @property
-    def repository_name(self) -> str:
-        return self.__repository_name
 
     @property
     def branch(self) -> str:
@@ -81,12 +48,12 @@ class Repository:
         return PullRequest(commits)
 
     def create_pull_request(self, title: str, description: str) -> str:
-        client = AwsClient(profile=self.__aws_profile, region=self.__aws_region)
+        client = AwsClient(profile=self.remote.profile, region=self.remote.region)
         response = client.create_pull_request(
             title=title,
             description=description,
-            repository=self.repository_name,
+            repository=self.remote.name,
             source=self.branch,
             destination=self.destination,
         )
-        return f"https://{self.__aws_region}.console.aws.amazon.com/codesuite/codecommit/repositories/{self.repository_name}/pull-requests/{response.get('pullRequestId')}/details?region={self.__aws_region}"
+        return f"https://{self.remote.region}.console.aws.amazon.com/codesuite/codecommit/repositories/{self.remote.name}/pull-requests/{response.get('pullRequestId')}/details?region={self.remote.region}"

@@ -13,13 +13,13 @@ def main(repository_path: Optional[str]) -> None:
     """
     repo = Repository(repository_path)
 
-    if not repo.supported:
+    if not repo.remote.supported:
         raise click.ClickException("The repository is not compatible with this tool!")
 
-    click.echo(f"Remote: {repo.remote}")
-    click.echo(f"Region: {repo.aws_region}")
-    click.echo(f"Profile: {repo.aws_profile}")
-    click.echo(f"Repo: {repo.repository_name}")
+    click.echo(f"Remote: {repo.remote.url}")
+    click.echo(f"Region: {repo.remote.region}")
+    click.echo(f"Profile: {repo.remote.profile}")
+    click.echo(f"Repo: {repo.remote.name}")
     click.echo(f"Branch: {repo.branch}")
     click.echo()
     pull_request = repo.pull_request_information()

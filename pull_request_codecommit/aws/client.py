@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import List
+from typing import List, Optional
 import subprocess
 
 
@@ -12,12 +12,25 @@ class Client:
     We use the AWS CLI for these operations so that we can use tha MFA toke cache from the cli.
     """
 
-    def __init__(self, profile: str, region: str) -> None:
-        self.__profile = profile
-        self.__region = region
+    def __init__(self, profile: Optional[str], region: Optional[str]) -> None:
+        self.__base_command: List[str] = []
+        self.__profile: Optional[str] = profile
+        self.__region: Optional[str] = region
+
+    @property
+    def base_command(self) -> List[str]:
+        base_command = ["aws"]
+
+        if self.__profile:
+            base_command.extend(["--profile", self.__profile])
+
+        if self.__region:
+            base_command.extend(["--region", self.__region])
+
+        return base_command
 
     def __execute(self, parameters: List[str]) -> str:
-        command = ["aws", "--profile", self.__profile, "--region", self.__region]
+        command = self.base_command
         command.extend(parameters)
         response = subprocess.run(command, stdout=subprocess.PIPE)
 
