@@ -15,29 +15,68 @@ def edit_message(message: str) -> str:
 
 
 @pytest.mark.parametrize(
-    "region, profile, config, commits",
+    "remote, region, profile, config, commits",
     [
         (
+            "codecommit::eu-west-1://my-profile@my-repository",
             "eu-west-1",
             "my-profile",
             b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
             COMMITS,
         ),
         (
+            "codecommit::eu-west-1://my-profile@my-repository",
             "eu-central-1",
             "my-profile",
             b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
             COMMITS_NO_ISSUES,
         ),
         (
+            "codecommit::eu-west-1://my-profile@my-repository",
             "eu-west-1",
             "my-other-profile",
             b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
             COMMITS_NO_ISSUES,
         ),
         (
+            "codecommit::eu-west-1://my-profile@my-repository",
             "eu-central-1",
             "my-other-profile",
+            b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
+            COMMITS,
+        ),
+        (
+            "codecommit::eu-west-1://my-repository",
+            "eu-central-1",
+            None,
+            b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
+            COMMITS,
+        ),
+        (
+            "codecommit::://my-profile@my-repository",
+            None,
+            "my-profile",
+            b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
+            COMMITS,
+        ),
+        (
+            "codecommit::://my-repository",
+            None,
+            None,
+            b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
+            COMMITS,
+        ),
+        (
+            "codecommit://my-profile@my-repository",
+            None,
+            "my-profile",
+            b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
+            COMMITS,
+        ),
+        (
+            "codecommit://my-repository",
+            None,
+            None,
             b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
             COMMITS,
         ),
@@ -50,6 +89,7 @@ def test_invoke(
     mock_edit: MagicMock,
     mock_git_client: MagicMock,
     mock_aws_client: MagicMock,
+    remote: str,
     region: str,
     profile: str,
     config: bytes,
@@ -58,9 +98,7 @@ def test_invoke(
     mock_edit.side_effect = edit_message
     mock_git_client.return_value.get_commit_messages.return_value = Commits(commits)
 
-    mock_git_client.return_value.remote.return_value = (
-        f"codecommit::{region}://{profile}@my-repository"
-    )
+    mock_git_client.return_value.remote.return_value = remote
     mock_git_client.return_value.current_branch.return_value = "feat/my-feature"
     configparser.open = MagicMock(return_value=TextIOWrapper(BytesIO(config)))  # type: ignore
 
@@ -186,3 +224,18 @@ def test_invoke_quit_edit(
     runner = CliRunner()
     result = runner.invoke(main)
     assert result.exit_code == 1
+
+
+@patch("pull_request_codecommit.repository.GitClient")
+def test_invoke_no_repository_name(
+    mock_git_client: MagicMock,
+) -> None:
+    mock_git_client.return_value.remote.return_value = f"codecommit::eu-west-1://"
+    mock_git_client.return_value.current_branch.return_value = "feat/my-feature"
+    config = b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master"
+    configparser.open = MagicMock(return_value=TextIOWrapper(BytesIO(config)))  # type: ignore
+
+    runner = CliRunner()
+    result = runner.invoke(main)
+    assert result.exit_code == 1
+    assert "Error: The repository is not compatible with this tool!" in result.output
