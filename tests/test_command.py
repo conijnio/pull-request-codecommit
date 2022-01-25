@@ -66,6 +66,20 @@ def edit_message(message: str) -> str:
             b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
             COMMITS,
         ),
+        (
+            "codecommit://my-profile@my-repository",
+            None,
+            "my-profile",
+            b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
+            COMMITS,
+        ),
+        (
+            "codecommit://my-repository",
+            None,
+            None,
+            b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
+            COMMITS,
+        ),
     ],
 )
 @patch("pull_request_codecommit.aws.client.subprocess.run")

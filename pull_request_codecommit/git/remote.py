@@ -19,7 +19,7 @@ class Remote:
 
     @property
     def supported(self) -> bool:
-        return self.__url.startswith("codecommit::") and self.name != ""
+        return self.__url.startswith("codecommit:") and self.name != ""
 
     @property
     def url(self) -> str:
