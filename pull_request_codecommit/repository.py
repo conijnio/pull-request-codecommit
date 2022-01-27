@@ -48,6 +48,7 @@ class Repository:
         return PullRequest(commits)
 
     def create_pull_request(self, title: str, description: str) -> str:
+        self.__git.push()
         client = AwsClient(profile=self.remote.profile, region=self.remote.region)
         response = client.create_pull_request(
             title=title,
