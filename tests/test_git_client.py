@@ -116,8 +116,44 @@ def test_get_commit_messages(
     client = Client(path)
 
     commits = client.get_commit_messages("main")
+
     first: Commit = next(commits)
     second: Commit = next(commits)
 
+    assert first == commits.first
     assert first.message.subject == "feat: my first commit"
     assert second.message.subject == "feat: my second commit"
+
+
+@patch("pull_request_codecommit.git.client.subprocess.run")
+@patch("pull_request_codecommit.git.client.os.path.isdir")
+def test_get_no_commit_messages(mock_isdir: MagicMock, mock_run: MagicMock) -> None:
+    mock_isdir.return_value = True
+
+    def execute(parameters, cwd, stdout):
+        assert -1 == stdout
+        mock_stdout = MagicMock()
+        mock_stdout.stdout = bytes("", "utf-8")
+        return mock_stdout
+
+    mock_run.side_effect = execute
+    client = Client("my-path")
+
+    commits = client.get_commit_messages("main")
+    assert commits.first is None
+
+
+@patch("pull_request_codecommit.git.client.subprocess.run")
+@patch("pull_request_codecommit.git.client.os.path.isdir")
+def test_push(mock_isdir: MagicMock, mock_run: MagicMock) -> None:
+    mock_isdir.return_value = True
+
+    def execute(parameters, cwd, stdout):
+        assert parameters == ["git", "push", "--set-upstream", "origin", "HEAD"]
+        assert -1 == stdout
+        mock_stdout = MagicMock()
+        mock_stdout.stdout = bytes("", "utf-8")
+        return mock_stdout
+
+    mock_run.side_effect = execute
+    Client("my-path").push()

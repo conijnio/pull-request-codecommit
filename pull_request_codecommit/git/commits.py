@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 import re
 
 from .commit import Commit
@@ -26,8 +26,8 @@ class Commits:
         self.__commits.reverse()
 
     @property
-    def first(self) -> Commit:
-        return self.__commits[0]
+    def first(self) -> Optional[Commit]:
+        return self.__commits[0] if self.__commits else None
 
     def __iter__(self):
         """
@@ -40,9 +40,14 @@ class Commits:
         self.__index += 1
         return item
 
+    def __len__(self) -> int:
+        return len(self.__commits)
+
     @property
     def issues(self) -> List[str]:
-        return list(set(map(lambda commit: commit.message.issue, self.__commits)))
+        return list(
+            set(filter(None, map(lambda commit: commit.message.issue, self.__commits)))
+        )
 
     @staticmethod
     def __read_commit_message(message: str) -> Commit:

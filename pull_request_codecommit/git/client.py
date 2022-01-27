@@ -25,6 +25,9 @@ class Client:
     def remote(self, name: str = "origin") -> str:
         return self.__execute(["config", "--get", f"remote.{name}.url"])
 
+    def push(self) -> None:
+        self.__execute(["push", "--set-upstream", "origin", "HEAD"])
+
     @property
     def current_branch(self) -> str:
         return self.__execute(["branch", "--show-current"])

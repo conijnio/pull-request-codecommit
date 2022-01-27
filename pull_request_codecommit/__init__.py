@@ -13,24 +13,30 @@ def main(repository_path: Optional[str]) -> None:
     """
     repo = Repository(repository_path)
 
-    if not repo.supported:
+    if not repo.remote.supported:
         raise click.ClickException("The repository is not compatible with this tool!")
 
-    click.echo(f"Remote: {repo.remote}")
-    click.echo(f"Region: {repo.aws_region}")
-    click.echo(f"Profile: {repo.aws_profile}")
-    click.echo(f"Repo: {repo.repository_name}")
+    click.echo(f"Remote: {repo.remote.url}")
+    click.echo(f"Region: {repo.remote.region}")
+    click.echo(f"Profile: {repo.remote.profile}")
+    click.echo(f"Repo: {repo.remote.name}")
     click.echo(f"Branch: {repo.branch}")
     click.echo()
-    title, description = repo.pull_request_information()
+    pull_request = repo.pull_request_information()
 
-    message = click.edit(f"{title}\n\n{description}")
+    if not pull_request.has_changes:
+        click.echo(
+            f"There are no differences between {repo.destination} and {repo.branch}!"
+        )
+        exit(0)
+
+    message = click.edit(f"{pull_request.title}\n\n{pull_request.description}")
 
     if message is None:
         raise click.ClickException("Pull request was not created")
 
     title = message.splitlines()[0]
-    description = "\n".join(message.splitlines()[1:])
+    description = "\n".join(message.splitlines()[1:]).lstrip("\n")
     link = repo.create_pull_request(title, description)
     click.echo(f"Please review/approve: {link}")
     click.echo()
