@@ -36,7 +36,7 @@ def main(repository_path: Optional[str]) -> None:
         raise click.ClickException("Pull request was not created")
 
     title = message.splitlines()[0]
-    description = "\n".join(message.splitlines()[1:])
+    description = "\n".join(message.splitlines()[1:]).lstrip("\n")
     link = repo.create_pull_request(title, description)
     click.echo(f"Please review/approve: {link}")
     click.echo()

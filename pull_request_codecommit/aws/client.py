@@ -54,6 +54,8 @@ class Client:
             "--targets",
             f"repositoryName={repository}, sourceReference={source}, destinationReference={destination}",
         ]
+        # print(command)
+        # return {"pullRequestId": 1}
         response = self.__execute(command)
         data = json.loads(response)
         return data.get("pullRequest")

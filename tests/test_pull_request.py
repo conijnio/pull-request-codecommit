@@ -41,16 +41,20 @@ Date:   Fri Jan 21 21:01:00 2022 +0100
     "commits, expected_title, expected_description",
     [
         (Commits(COMMIT_SIMPLE_MESSAGE), "feat: my first commit", ""),
-        (Commits(COMMIT_DETAILED_MESSAGE), "feat: my first commit", ""),
+        (
+            Commits(COMMIT_DETAILED_MESSAGE),
+            "feat: my first commit",
+            "Some additional information",
+        ),
         (
             Commits(COMMIT_SIMPLE_MESSAGE_ISSUE),
             "feat: my first commit (#1)",
-            "\nIssues: #1",
+            "Issues: #1",
         ),
         (
             Commits(COMMIT_DETAILED_MESSAGE_ISSUE),
             "feat: my first commit (#1)",
-            "\nIssues: #1",
+            "Some additional information\n\nIssues: #1",
         ),
         (
             Commits(""),
