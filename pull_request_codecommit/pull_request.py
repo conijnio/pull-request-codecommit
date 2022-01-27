@@ -27,9 +27,16 @@ class PullRequest:
 
     @property
     def description(self) -> str:
-        description = list(map(lambda commit: commit.message.subject, self.__commits))
+        if len(self.__commits) == 1:
+            description = (
+                [self.__commits.first.message.body] if self.__commits.first else []
+            )
+        else:
+            description = list(
+                map(lambda commit: commit.message.subject, self.__commits)
+            )
 
         if self.__commits.issues:
             description.append(f"\nIssues: " + ", ".join(self.__commits.issues))
 
-        return "\n".join(description)
+        return "\n".join(description).lstrip("\n")

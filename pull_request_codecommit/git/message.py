@@ -1,4 +1,5 @@
 import re
+from typing import List
 
 
 class Message:
@@ -14,20 +15,33 @@ class Message:
         for line in iter(message.splitlines()):
             lines.append(line.strip(" "))
 
-        self.__lines = list(filter(None, lines))
-        self.__message = "\n".join(self.__lines)
+        self.__issue: str = ""
+        self.__lines: List[str] = list(filter(None, lines))
+
+        if "issue" in self.__lines[-1].lower():
+            self.__detect_issue(self.__lines.pop())
+
+    def __detect_issue(self, line: str) -> None:
+        match = re.search(r"(?i)issue(:|) (.*)", line)
+        self.__issue = f"{match.group(2)}" if match else ""
 
     @property
     def issue(self) -> str:
         """
         Issue reference should be in the footer of the commit message
         """
-        match = re.search(r"(?i)issue(:|) (.*)", self.__lines[-1])
-        return f"{match.group(2)}" if match else ""
+        return self.__issue
 
     @property
     def subject(self) -> str:
         """
         Subject is the first line of the commit message
         """
-        return self.__lines[0]
+        return self.__lines[0] if len(self.__lines) > 0 else ""
+
+    @property
+    def body(self) -> str:
+        """
+        Body is all except the first line
+        """
+        return "\n".join(self.__lines[1:]).lstrip("\n")

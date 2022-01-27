@@ -40,6 +40,9 @@ class Commits:
         self.__index += 1
         return item
 
+    def __len__(self) -> int:
+        return len(self.__commits)
+
     @property
     def issues(self) -> List[str]:
         return list(
