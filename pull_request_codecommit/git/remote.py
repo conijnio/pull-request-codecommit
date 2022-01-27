@@ -42,7 +42,7 @@ class Remote:
     @property
     def name(self) -> str:
         if not self.__name:
-            name = self.__regex(r"(\/\/|@)(.*)$", 2)
+            name = self.__regex(r"(\/\/|.*@)(.*)$", 2)
 
             if name:
                 self.__name = name
