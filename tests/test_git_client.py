@@ -141,3 +141,19 @@ def test_get_no_commit_messages(mock_isdir: MagicMock, mock_run: MagicMock) -> N
 
     commits = client.get_commit_messages("main")
     assert commits.first is None
+
+
+@patch("pull_request_codecommit.git.client.subprocess.run")
+@patch("pull_request_codecommit.git.client.os.path.isdir")
+def test_push(mock_isdir: MagicMock, mock_run: MagicMock) -> None:
+    mock_isdir.return_value = True
+
+    def execute(parameters, cwd, stdout):
+        assert parameters == ["git", "push", "--set-upstream", "origin", "HEAD"]
+        assert -1 == stdout
+        mock_stdout = MagicMock()
+        mock_stdout.stdout = bytes("", "utf-8")
+        return mock_stdout
+
+    mock_run.side_effect = execute
+    Client("my-path").push()
