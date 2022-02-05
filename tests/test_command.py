@@ -1,5 +1,6 @@
 import json
 from io import TextIOWrapper, BytesIO
+from typing import List
 from unittest.mock import patch, MagicMock
 
 import pytest
@@ -14,8 +15,22 @@ def edit_message(message: str) -> str:
     return message
 
 
+def execute(parameters, stdout):
+    assert -1 == stdout
+    mock_stdout = MagicMock()
+
+    if "create-pull-request" in parameters:
+        data = {"pullRequest": {"pullRequestId": 1}}
+
+    elif "merge-branches-by-fast-forward" in parameters:
+        data = {"pullRequest": {"pullRequestStatus": "CLOSED"}}
+
+    mock_stdout.stdout = bytes(json.dumps(data), "utf-8")
+    return mock_stdout
+
+
 @pytest.mark.parametrize(
-    "remote, region, profile, config, commits",
+    "remote, region, profile, config, commits, parameters",
     [
         (
             "codecommit::eu-west-1://my-profile@my-repository",
@@ -23,6 +38,7 @@ def edit_message(message: str) -> str:
             "my-profile",
             b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
             COMMITS,
+            [],
         ),
         (
             "codecommit::eu-west-1://my-profile@my-repository",
@@ -30,6 +46,7 @@ def edit_message(message: str) -> str:
             "my-profile",
             b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
             COMMITS_NO_ISSUES,
+            [],
         ),
         (
             "codecommit::eu-west-1://my-profile@my-repository",
@@ -37,6 +54,7 @@ def edit_message(message: str) -> str:
             "my-other-profile",
             b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
             COMMITS_NO_ISSUES,
+            [],
         ),
         (
             "codecommit::eu-west-1://my-profile@my-repository",
@@ -44,6 +62,7 @@ def edit_message(message: str) -> str:
             "my-other-profile",
             b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
             COMMITS,
+            [],
         ),
         (
             "codecommit::eu-west-1://my-repository",
@@ -51,6 +70,7 @@ def edit_message(message: str) -> str:
             None,
             b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
             COMMITS,
+            [],
         ),
         (
             "codecommit::://my-profile@my-repository",
@@ -58,6 +78,7 @@ def edit_message(message: str) -> str:
             "my-profile",
             b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
             COMMITS,
+            [],
         ),
         (
             "codecommit::://my-repository",
@@ -65,6 +86,7 @@ def edit_message(message: str) -> str:
             None,
             b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
             COMMITS,
+            [],
         ),
         (
             "codecommit://my-profile@my-repository",
@@ -72,6 +94,7 @@ def edit_message(message: str) -> str:
             "my-profile",
             b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
             COMMITS,
+            [],
         ),
         (
             "codecommit://my-repository",
@@ -79,6 +102,79 @@ def edit_message(message: str) -> str:
             None,
             b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
             COMMITS,
+            [],
+        ),
+        (
+            "codecommit::eu-west-1://my-profile@my-repository",
+            "eu-west-1",
+            "my-profile",
+            b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
+            COMMITS,
+            ["--auto-merge"],
+        ),
+        (
+            "codecommit::eu-west-1://my-profile@my-repository",
+            "eu-central-1",
+            "my-profile",
+            b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
+            COMMITS_NO_ISSUES,
+            ["--auto-merge"],
+        ),
+        (
+            "codecommit::eu-west-1://my-profile@my-repository",
+            "eu-west-1",
+            "my-other-profile",
+            b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
+            COMMITS_NO_ISSUES,
+            ["--auto-merge"],
+        ),
+        (
+            "codecommit::eu-west-1://my-profile@my-repository",
+            "eu-central-1",
+            "my-other-profile",
+            b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
+            COMMITS,
+            ["--auto-merge"],
+        ),
+        (
+            "codecommit::eu-west-1://my-repository",
+            "eu-central-1",
+            None,
+            b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
+            COMMITS,
+            ["--auto-merge"],
+        ),
+        (
+            "codecommit::://my-profile@my-repository",
+            None,
+            "my-profile",
+            b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
+            COMMITS,
+            ["--auto-merge"],
+        ),
+        (
+            "codecommit::://my-repository",
+            None,
+            None,
+            b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
+            COMMITS,
+            ["--auto-merge"],
+        ),
+        (
+            "codecommit://my-profile@my-repository",
+            None,
+            "my-profile",
+            b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
+            COMMITS,
+            ["--auto-merge"],
+        ),
+        (
+            "codecommit://my-repository",
+            None,
+            None,
+            b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
+            COMMITS,
+            ["--auto-merge"],
         ),
     ],
 )
@@ -94,6 +190,7 @@ def test_invoke(
     profile: str,
     config: bytes,
     commits: str,
+    parameters: List[str],
 ) -> None:
     mock_edit.side_effect = edit_message
     mock_git_client.return_value.get_commit_messages.return_value = Commits(commits)
@@ -101,18 +198,10 @@ def test_invoke(
     mock_git_client.return_value.remote.return_value = remote
     mock_git_client.return_value.current_branch.return_value = "feat/my-feature"
     configparser.open = MagicMock(return_value=TextIOWrapper(BytesIO(config)))  # type: ignore
-
-    def execute(parameters, stdout):
-        assert -1 == stdout
-        mock_stdout = MagicMock()
-        data = {"pullRequest": {"pullRequestId": 1}}
-        mock_stdout.stdout = bytes(json.dumps(data), "utf-8")
-        return mock_stdout
-
     mock_aws_client.side_effect = execute
 
     runner = CliRunner()
-    result = runner.invoke(main, [])
+    result = runner.invoke(main, parameters)
     assert result.exit_code == 0
 
 
