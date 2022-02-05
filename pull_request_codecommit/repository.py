@@ -2,9 +2,7 @@ import os
 from typing import Optional
 
 from .config import Config
-from .git import Client as GitClient, Remote
-from .aws import Client as AwsClient
-from .pull_request import PullRequest
+from .git import Client as GitClient, Remote, Commits
 
 
 class Repository:
@@ -43,20 +41,8 @@ class Repository:
         destination = self.__config("destination_branch")
         return destination if destination else ""
 
-    def pull_request_information(self) -> PullRequest:
-        commits = self.__git.get_commit_messages(destination_branch=self.destination)
-        return PullRequest(commits)
+    def commits(self) -> Commits:
+        return self.__git.get_commit_messages(destination_branch=self.destination)
 
-    def create_pull_request(self, pr: PullRequest) -> None:
+    def push(self) -> None:
         self.__git.push()
-        client = AwsClient(profile=self.remote.profile, region=self.remote.region)
-        response = client.create_pull_request(
-            title=pr.title,
-            description=pr.description,
-            repository=self.remote.name,
-            source=self.branch,
-            destination=self.destination,
-        )
-        pr.update_link(
-            f"https://{self.remote.region}.console.aws.amazon.com/codesuite/codecommit/repositories/{self.remote.name}/pull-requests/{response.get('pullRequestId')}/details?region={self.remote.region}"
-        )

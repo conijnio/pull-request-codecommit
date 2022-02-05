@@ -1,3 +1,5 @@
+from unittest.mock import MagicMock
+
 import pytest
 
 from pull_request_codecommit.git import Commits
@@ -66,6 +68,9 @@ Date:   Fri Jan 21 21:01:00 2022 +0100
 def test_git_client(
     commits: Commits, expected_title: str, expected_description: str
 ) -> None:
-    pull_request = PullRequest(commits)
+    mock_repo = MagicMock()
+    mock_repo.commits.return_value = commits
+
+    pull_request = PullRequest(mock_repo)
     assert pull_request.title == expected_title
     assert pull_request.description == expected_description

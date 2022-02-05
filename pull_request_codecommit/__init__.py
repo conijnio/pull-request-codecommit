@@ -2,8 +2,8 @@ from typing import Optional
 
 import click
 
-from pull_request_codecommit.pull_request import PullRequest
-from pull_request_codecommit.repository import Repository
+from .pull_request import PullRequest
+from .repository import Repository
 
 
 @click.command()
@@ -26,8 +26,8 @@ def __load_repository(repository_path: Optional[str]) -> Repository:
     return repo
 
 
-def __create_pull_request(repo: Repository) -> None:
-    pr = repo.pull_request_information()
+def __create_pull_request(repo: Repository) -> PullRequest:
+    pr = PullRequest(repo)
 
     if not pr.has_changes:
         click.echo(
@@ -36,12 +36,14 @@ def __create_pull_request(repo: Repository) -> None:
         exit(0)
 
     __propose_title_description(pr)
-    repo.create_pull_request(pr)
+    pr.create()
 
     click.echo(f"Please review/approve: {pr.link}")
     click.echo()
     click.echo(click.style(pr.title, bold=True))
     click.echo(pr.description)
+
+    return pr
 
 
 def __display_repository_information(repo: Repository) -> None:
