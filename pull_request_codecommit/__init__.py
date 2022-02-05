@@ -8,13 +8,18 @@ from .repository import Repository
 
 @click.command()
 @click.option("-r", "--repository-path", default=None)
-def main(repository_path: Optional[str]) -> None:
+@click.option("--auto-merge/--no-auto-merge", default=False)
+def main(repository_path: Optional[str], auto_merge: bool) -> None:
     """
     pull-request-codecommit
     """
     repo = __load_repository(repository_path)
     __display_repository_information(repo)
-    __create_pull_request(repo)
+    pr = __create_pull_request(repo)
+
+    if auto_merge:
+        status = pr.merge()
+        click.echo(f"Auto merging resulted in: {status}")
 
 
 def __load_repository(repository_path: Optional[str]) -> Repository:

@@ -52,6 +52,17 @@ To use `pull-request-codecommit` you just execute the following command:
 pull-request-codecommit
 ```
 
+### Auto merge
+
+In some cases it makes sense to directly merge the pull request, in those cases you can use:
+
+```bash
+pull-request-codecommit --auto-merge
+```
+
+This will directly merge the pull request using the fast-forward merge strategy.
+If the merge is successful, it closes the pull request.
+
 ## Testing locally
 
 ```bash

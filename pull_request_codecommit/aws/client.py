@@ -44,18 +44,33 @@ class Client:
         source: str,
         destination: str,
     ) -> dict:
-        command = [
-            "codecommit",
-            "create-pull-request",
-            "--title",
-            title,
-            "--description",
-            description,
-            "--targets",
-            f"repositoryName={repository}, sourceReference={source}, destinationReference={destination}",
-        ]
-        # print(command)
-        # return {"pullRequestId": 1}
-        response = self.__execute(command)
+        response = self.__execute(
+            [
+                "codecommit",
+                "create-pull-request",
+                "--title",
+                title,
+                "--description",
+                description,
+                "--targets",
+                f"repositoryName={repository}, sourceReference={source}, destinationReference={destination}",
+            ]
+        )
         data = json.loads(response)
+
+        return data.get("pullRequest")
+
+    def merge_pull_request(self, repository: str, pull_request_id: int) -> dict:
+        response = self.__execute(
+            [
+                "codecommit",
+                "merge-pull-request-by-fast-forward",
+                "--pull-request-id",
+                str(pull_request_id),
+                "--repository-name",
+                repository,
+            ]
+        )
+        data = json.loads(response)
+
         return data.get("pullRequest")

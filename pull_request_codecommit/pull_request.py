@@ -1,3 +1,5 @@
+from typing import Optional
+
 from .repository import Repository
 from pull_request_codecommit.git import Commits
 from .aws import Client as AwsClient
@@ -8,12 +10,24 @@ class PullRequest:
     Understands pull requests
     """
 
+    __aws_client: Optional[AwsClient] = None
+
     def __init__(self, repo: Repository) -> None:
         self.__repo: Repository = repo
         self.__commits: Commits = self.__repo.commits()
         self.__title: str = ""
         self.__description: str = ""
         self.__link: str = ""
+        self.__pull_request_id: int = 0
+
+    @property
+    def __client(self) -> AwsClient:
+        if not self.__aws_client:
+            self.__aws_client = AwsClient(
+                profile=self.__repo.remote.profile, region=self.__repo.remote.region
+            )
+
+        return self.__aws_client
 
     def update(self, title: str, description: str) -> None:
         self.__title = title
@@ -21,10 +35,7 @@ class PullRequest:
 
     def create(self) -> None:
         self.__repo.push()
-        client = AwsClient(
-            profile=self.__repo.remote.profile, region=self.__repo.remote.region
-        )
-        response = client.create_pull_request(
+        response = self.__client.create_pull_request(
             title=self.title,
             description=self.description,
             repository=self.__repo.remote.name,
@@ -32,14 +43,23 @@ class PullRequest:
             destination=self.__repo.destination,
         )
 
+        self.__pull_request_id = int(response.get("pullRequestId", 0))
+
         self.__link = "".join(
             [
                 f"https://{self.__repo.remote.region}.console.aws.amazon.com/",
                 "codesuite/codecommit/repositories/",
-                f"pull-requests/{response.get('pullRequestId')}/details",
+                f"pull-requests/{self.__pull_request_id}/details",
                 f"?region={self.__repo.remote.region}",
             ]
         )
+
+    def merge(self) -> str:
+        response = self.__client.merge_pull_request(
+            repository=self.__repo.remote.name, pull_request_id=self.__pull_request_id
+        )
+
+        return response.get("pullRequestStatus", "")
 
     @property
     def has_changes(self) -> bool:

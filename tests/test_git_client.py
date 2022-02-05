@@ -3,21 +3,7 @@ from unittest.mock import patch, MagicMock
 
 from pull_request_codecommit.git import Commit
 from pull_request_codecommit.git.client import Client
-
-COMMIT2 = """commit my-hash-1
-Author: John Doe <john@doe.nl>
-Date:   Fri Jan 21 21:01:00 2022 +0100
-
-    feat: my first commit"""
-
-COMMIT1 = """commit my-hash-2
-Author: John Doe <john@doe.nl>
-Date:   Fri Jan 21 21:01:00 2022 +0100
-
-    feat: my second commit"""
-
-COMMITS = f"{COMMIT1}\n\n    Issue #1\n\n{COMMIT2}\n\n    Issue #2"
-COMMITS_NO_ISSUES = f"{COMMIT1}\n\n{COMMIT2}"
+from tests import COMMITS
 
 
 def test_git_client() -> None:
