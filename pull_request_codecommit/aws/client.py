@@ -64,7 +64,7 @@ class Client:
         response = self.__execute(
             [
                 "codecommit",
-                "merge-branches-by-fast-forward",
+                "merge-pull-request-by-fast-forward",
                 "--pull-request-id",
                 str(pull_request_id),
                 "--repository-name",
