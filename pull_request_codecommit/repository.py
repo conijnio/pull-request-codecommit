@@ -47,14 +47,16 @@ class Repository:
         commits = self.__git.get_commit_messages(destination_branch=self.destination)
         return PullRequest(commits)
 
-    def create_pull_request(self, title: str, description: str) -> str:
+    def create_pull_request(self, pr: PullRequest) -> None:
         self.__git.push()
         client = AwsClient(profile=self.remote.profile, region=self.remote.region)
         response = client.create_pull_request(
-            title=title,
-            description=description,
+            title=pr.title,
+            description=pr.description,
             repository=self.remote.name,
             source=self.branch,
             destination=self.destination,
         )
-        return f"https://{self.remote.region}.console.aws.amazon.com/codesuite/codecommit/repositories/{self.remote.name}/pull-requests/{response.get('pullRequestId')}/details?region={self.remote.region}"
+        pr.update_link(
+            f"https://{self.remote.region}.console.aws.amazon.com/codesuite/codecommit/repositories/{self.remote.name}/pull-requests/{response.get('pullRequestId')}/details?region={self.remote.region}"
+        )

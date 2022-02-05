@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Optional
 
 import click
 
@@ -28,18 +28,20 @@ def __load_repository(repository_path: Optional[str]) -> Repository:
 
 def __create_pull_request(repo: Repository) -> None:
     pr = repo.pull_request_information()
+
     if not pr.has_changes:
         click.echo(
             f"There are no differences between {repo.destination} and {repo.branch}!"
         )
         exit(0)
-    description, title = __propose_title_description(pr)
-    link = repo.create_pull_request(title, description)
 
-    click.echo(f"Please review/approve: {link}")
+    __propose_title_description(pr)
+    repo.create_pull_request(pr)
+
+    click.echo(f"Please review/approve: {pr.link}")
     click.echo()
-    click.echo(click.style(title, bold=True))
-    click.echo(description)
+    click.echo(click.style(pr.title, bold=True))
+    click.echo(pr.description)
 
 
 def __display_repository_information(repo: Repository) -> None:
@@ -51,13 +53,16 @@ def __display_repository_information(repo: Repository) -> None:
     click.echo()
 
 
-def __propose_title_description(pr: PullRequest) -> Tuple[str, str]:
+def __propose_title_description(pr: PullRequest) -> None:
     message = click.edit(f"{pr.title}\n\n{pr.description}")
+
     if message is None:
         raise click.ClickException("Pull request was not created")
+
     title = message.splitlines()[0]
     description = "\n".join(message.splitlines()[1:]).lstrip("\n")
-    return description, title
+
+    pr.update(title, description)
 
 
 if __name__ == "__main__":
