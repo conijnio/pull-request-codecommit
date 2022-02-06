@@ -77,4 +77,11 @@ SCENARIOS = [
         b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
         COMMITS,
     ),
+    (
+        "codecommit://my-repository-pr-failure",
+        None,
+        None,
+        b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
+        COMMITS,
+    ),
 ]

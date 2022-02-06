@@ -23,7 +23,8 @@ def aws_client_execute_side_effect(parameters, stdout):
         data = {"pullRequest": {"pullRequestId": 1}}
 
     elif "merge-pull-request-by-fast-forward" in parameters:
-        data = {"pullRequest": {"pullRequestStatus": "CLOSED"}}
+        status = "OPEN" if parameters[-1] == "my-repository-pr-failure" else "CLOSED"
+        data = {"pullRequest": {"pullRequestStatus": status}}
 
     mock_stdout.stdout = bytes(json.dumps(data), "utf-8")
     return mock_stdout

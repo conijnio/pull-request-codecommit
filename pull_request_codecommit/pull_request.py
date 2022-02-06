@@ -58,8 +58,12 @@ class PullRequest:
         response = self.__client.merge_pull_request(
             repository=self.__repo.remote.name, pull_request_id=self.__pull_request_id
         )
+        status = response.get("pullRequestStatus", "")
 
-        return response.get("pullRequestStatus", "")
+        if status == "CLOSED":
+            self.__repo.checkout_destination()
+
+        return status
 
     @property
     def has_changes(self) -> bool:

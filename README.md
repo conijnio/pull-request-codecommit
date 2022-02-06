@@ -61,7 +61,14 @@ pull-request-codecommit --auto-merge
 ```
 
 This will directly merge the pull request using the fast-forward merge strategy.
-If the merge is successful, it closes the pull request.
+If the merge is successful, it will:
+
+- Merge and close the pull request.
+- Checkout the destination branch.
+- Pull the latest changes. (This will pull the just merged changes locally)
+- Remove the working branch.
+
+From this point you are ready for the next change.
 
 ## Testing locally
 

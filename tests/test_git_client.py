@@ -143,3 +143,51 @@ def test_push(mock_isdir: MagicMock, mock_run: MagicMock) -> None:
 
     mock_run.side_effect = execute
     Client("my-path").push()
+
+
+@patch("pull_request_codecommit.git.client.subprocess.run")
+@patch("pull_request_codecommit.git.client.os.path.isdir")
+def test_pull(mock_isdir: MagicMock, mock_run: MagicMock) -> None:
+    mock_isdir.return_value = True
+
+    def execute(parameters, cwd, stdout):
+        assert parameters == ["git", "pull"]
+        assert -1 == stdout
+        mock_stdout = MagicMock()
+        mock_stdout.stdout = bytes("", "utf-8")
+        return mock_stdout
+
+    mock_run.side_effect = execute
+    Client("my-path").pull()
+
+
+@patch("pull_request_codecommit.git.client.subprocess.run")
+@patch("pull_request_codecommit.git.client.os.path.isdir")
+def test_delete_branch(mock_isdir: MagicMock, mock_run: MagicMock) -> None:
+    mock_isdir.return_value = True
+
+    def execute(parameters, cwd, stdout):
+        assert parameters == ["git", "branch", "-d", "feat/my-feature"]
+        assert -1 == stdout
+        mock_stdout = MagicMock()
+        mock_stdout.stdout = bytes("", "utf-8")
+        return mock_stdout
+
+    mock_run.side_effect = execute
+    Client("my-path").delete_branch("feat/my-feature")
+
+
+@patch("pull_request_codecommit.git.client.subprocess.run")
+@patch("pull_request_codecommit.git.client.os.path.isdir")
+def test_checkout(mock_isdir: MagicMock, mock_run: MagicMock) -> None:
+    mock_isdir.return_value = True
+
+    def execute(parameters, cwd, stdout):
+        assert parameters == ["git", "checkout", "master"]
+        assert -1 == stdout
+        mock_stdout = MagicMock()
+        mock_stdout.stdout = bytes("", "utf-8")
+        return mock_stdout
+
+    mock_run.side_effect = execute
+    Client("my-path").checkout("master")
