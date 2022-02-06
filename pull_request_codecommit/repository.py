@@ -46,3 +46,9 @@ class Repository:
 
     def push(self) -> None:
         self.__git.push()
+
+    def checkout_destination(self) -> None:
+        branch = self.branch
+        self.__git.checkout(self.destination)
+        self.__git.pull()
+        self.__git.delete_branch(branch)
