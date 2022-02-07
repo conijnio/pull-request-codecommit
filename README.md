@@ -70,6 +70,10 @@ If the merge is successful, it will:
 
 From this point you are ready for the next change.
 
+### Update existing pull request
+
+When a pull requests exists a proposal is made to update the existing pull request.
+
 ## Testing locally
 
 ```bash
