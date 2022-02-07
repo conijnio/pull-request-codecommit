@@ -28,6 +28,10 @@ class PullRequestCodeCommit:
         return self.__data.get("pullRequestId", 0)
 
     @property
+    def description(self) -> str:
+        return self.__data.get("description", "").replace("\n\n", "\n")
+
+    @property
     def link(self) -> str:
         return self.__repo.remote.pull_request_url(self.pull_request_id)
 
