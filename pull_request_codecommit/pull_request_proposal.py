@@ -11,12 +11,12 @@ class PullRequestProposal:
 
     @property
     def title(self) -> str:
-        return self.__generate_title()
-
-    def __generate_title(self) -> str:
         if self.__title:
             return self.__title
 
+        return self.__generate_title()
+
+    def __generate_title(self) -> str:
         if not self.__commits.first:
             return ""
 
