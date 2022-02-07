@@ -41,7 +41,7 @@ def __create_pull_request(repo: Repository) -> PullRequest:
         exit(0)
 
     __propose_title_description(pr)
-    pr.create()
+    pr.save()
 
     click.echo(f"Please review/approve: {pr.link}")
     click.echo()
