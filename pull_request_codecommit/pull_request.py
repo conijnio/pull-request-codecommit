@@ -1,7 +1,8 @@
 from typing import Optional
 
+from .pull_request_codecommit import PullRequestCodeCommit
 from .repository import Repository
-from pull_request_codecommit.git import Commits
+from .git import Commits
 from .aws import Client as AwsClient
 
 
@@ -10,60 +11,26 @@ class PullRequest:
     Understands pull requests
     """
 
-    __aws_client: Optional[AwsClient] = None
-
     def __init__(self, repo: Repository) -> None:
         self.__repo: Repository = repo
         self.__commits: Commits = self.__repo.commits()
         self.__title: str = ""
         self.__description: str = ""
         self.__link: str = ""
-        self.__pull_request_id: int = 0
-
-    @property
-    def __client(self) -> AwsClient:
-        if not self.__aws_client:
-            self.__aws_client = AwsClient(
-                profile=self.__repo.remote.profile, region=self.__repo.remote.region
-            )
-
-        return self.__aws_client
+        self.__pull_request: PullRequestCodeCommit = PullRequestCodeCommit(
+            repository=repo
+        )
 
     def update(self, title: str, description: str) -> None:
         self.__title = title
         self.__description = description
 
-    def create(self) -> None:
+    def save(self) -> None:
         self.__repo.push()
-        response = self.__client.create_pull_request(
-            title=self.title,
-            description=self.description,
-            repository=self.__repo.remote.name,
-            source=self.__repo.branch,
-            destination=self.__repo.destination,
-        )
-
-        self.__pull_request_id = int(response.get("pullRequestId", 0))
-
-        self.__link = "".join(
-            [
-                f"https://{self.__repo.remote.region}.console.aws.amazon.com/",
-                "codesuite/codecommit/repositories/",
-                f"pull-requests/{self.__pull_request_id}/details",
-                f"?region={self.__repo.remote.region}",
-            ]
-        )
+        self.__pull_request.save(self.title, self.description)
 
     def merge(self) -> str:
-        response = self.__client.merge_pull_request(
-            repository=self.__repo.remote.name, pull_request_id=self.__pull_request_id
-        )
-        status = response.get("pullRequestStatus", "")
-
-        if status == "CLOSED":
-            self.__repo.checkout_destination()
-
-        return status
+        return self.__pull_request.merge()
 
     @property
     def has_changes(self) -> bool:
@@ -105,4 +72,4 @@ class PullRequest:
 
     @property
     def link(self) -> str:
-        return self.__link
+        return self.__pull_request.link

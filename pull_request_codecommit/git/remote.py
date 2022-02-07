@@ -48,3 +48,13 @@ class Remote:
                 self.__name = name
 
         return self.__name
+
+    @property
+    def codecommit_url(self) -> str:
+        return f"https://{self.region}.console.aws.amazon.com/codesuite/codecommit/repositories/{self.name}"
+
+    def pull_request_url(self, pull_request_id: int) -> str:
+        return (
+            self.codecommit_url
+            + f"/pull-requests/{pull_request_id}/details?region={self.region}"
+        )
