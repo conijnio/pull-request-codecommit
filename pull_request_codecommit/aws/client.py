@@ -36,6 +36,46 @@ class Client:
 
         return response.stdout.decode("utf-8").strip("\n")
 
+    def get_open_pull_request(
+        self, repository: str, source: str, destination: str
+    ) -> dict:
+        response = self.__execute(
+            [
+                "codecommit",
+                "list-pull-requests",
+                "--repository-name",
+                repository,
+                "--pull-request-status",
+                "OPEN",
+            ]
+        )
+        data = json.loads(response)
+        open_pull_requests = data.get("pullRequestIds")
+
+        for pull_request_id in open_pull_requests:
+            pr = self.__get_pull_request(pull_request_id)
+            target = pr.get("pullRequestTargets", [{}])[0]
+
+            if (
+                target.get("sourceReference") == f"refs/heads/{source}"
+                and target.get("destinationReference") == f"refs/heads/{destination}"
+            ):
+                return pr
+
+        return {}
+
+    def __get_pull_request(self, pull_request_id: int) -> dict:
+        response = self.__execute(
+            [
+                "codecommit",
+                "get-pull-request",
+                "--pull-request-id",
+                str(pull_request_id),
+            ]
+        )
+        data = json.loads(response)
+        return data.get("pullRequest", {})
+
     def create_pull_request(
         self,
         title: str,
@@ -54,6 +94,25 @@ class Client:
                 description,
                 "--targets",
                 f"repositoryName={repository}, sourceReference={source}, destinationReference={destination}",
+            ]
+        )
+        data = json.loads(response)
+
+        return data.get("pullRequest")
+
+    def update_pull_request(
+        self,
+        pull_request_id: int,
+        description: str,
+    ) -> dict:
+        response = self.__execute(
+            [
+                "codecommit",
+                "update-pull-request-description",
+                "--pull-request-id",
+                str(pull_request_id),
+                "--description",
+                description,
             ]
         )
         data = json.loads(response)

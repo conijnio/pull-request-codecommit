@@ -84,4 +84,18 @@ SCENARIOS = [
         b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
         COMMITS,
     ),
+    (
+        "codecommit://my-repository-open-pr",
+        None,
+        None,
+        b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
+        COMMITS,
+    ),
+    (
+        "codecommit://my-repository-other-open-pr",
+        None,
+        None,
+        b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
+        COMMITS,
+    ),
 ]
