@@ -8,12 +8,15 @@ from .repository import Repository
 
 @click.command()
 @click.option("-r", "--repository-path", default=None)
+@click.option("-b", "--branch", default=None)
 @click.option("--auto-merge/--no-auto-merge", default=False)
-def main(repository_path: Optional[str], auto_merge: bool) -> None:
+def main(
+    repository_path: Optional[str], branch: Optional[str], auto_merge: bool
+) -> None:
     """
     pull-request-codecommit
     """
-    repo = __load_repository(repository_path)
+    repo = __load_repository(repository_path=repository_path, target_branch=branch)
     __display_repository_information(repo)
     pr = __create_pull_request(repo)
 
@@ -22,8 +25,10 @@ def main(repository_path: Optional[str], auto_merge: bool) -> None:
         click.echo(f"Auto merging resulted in: {status}")
 
 
-def __load_repository(repository_path: Optional[str]) -> Repository:
-    repo = Repository(repository_path)
+def __load_repository(
+    repository_path: Optional[str], target_branch: Optional[str]
+) -> Repository:
+    repo = Repository(path=repository_path, target_branch=target_branch)
 
     if not repo.remote.supported:
         raise click.ClickException("The repository is not compatible with this tool!")

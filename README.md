@@ -72,6 +72,14 @@ From this point you are ready for the next change.
 
 When a pull requests exists a proposal is made to update the existing pull request.
 
+### Overwrite target branch
+
+When you want to overwrite the target branch you need to supply the `--branch <name>` option:
+
+```bash
+pull-request-codecommit --branch my-target-branch
+```
+
 ## Testing locally
 
 ```bash

@@ -19,7 +19,7 @@ class Client:
 
     @property
     def base_command(self) -> List[str]:
-        base_command = ["aws"]
+        base_command = ["aws", "--output", "json"]
 
         if self.__profile:
             base_command.extend(["--profile", self.__profile])
