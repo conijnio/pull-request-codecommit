@@ -93,7 +93,14 @@ def generate_invoke_parameters(
 
 @pytest.mark.parametrize(
     "remote, region, profile, config, commits, parameters",
-    generate_invoke_parameters([[], ["--auto-merge"]]),
+    generate_invoke_parameters(
+        [
+            [],
+            ["--auto-merge"],
+            ["-b", "my-target-branch"],
+            ["--branch", "my-target-branch"],
+        ]
+    ),
 )
 @patch("pull_request_codecommit.aws.client.subprocess.run")
 @patch("pull_request_codecommit.repository.GitClient")

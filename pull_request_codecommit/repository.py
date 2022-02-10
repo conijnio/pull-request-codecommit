@@ -10,17 +10,22 @@ class Repository:
     Understands CodeCommit repositories
     """
 
-    def __init__(self, path: Optional[str] = None) -> None:
-        self.__remote: Optional[Remote] = None
-        self.__branch: str = ""
-
+    def __init__(
+        self, path: Optional[str] = None, target_branch: Optional[str] = None
+    ) -> None:
         if not path:
             path = os.getcwd()
 
         self.__git = GitClient(path)
+        self.__remote: Optional[Remote] = None
+        self.__branch: str = ""
+        self.__target_branch: str = (
+            target_branch if target_branch else self.__config("destination_branch")
+        )
 
-    def __config(self, method: str) -> Optional[str]:
-        return getattr(Config, method)(self.remote.profile)
+    def __config(self, method: str) -> str:
+        item = getattr(Config, method)(self.remote.profile)
+        return item if item else ""
 
     @property
     def remote(self) -> Remote:
@@ -38,8 +43,7 @@ class Repository:
 
     @property
     def destination(self) -> str:
-        destination = self.__config("destination_branch")
-        return destination if destination else ""
+        return self.__target_branch
 
     def commits(self) -> Commits:
         return self.__git.get_commit_messages(destination_branch=self.destination)
