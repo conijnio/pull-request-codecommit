@@ -1,4 +1,9 @@
-from pull_request_codecommit.git import Commits
+from typing import Optional
+
+from .pull_request_codecommit import PullRequestCodeCommit
+from .pull_request_proposal import PullRequestProposal
+from .repository import Repository
+from .git import Commits
 
 
 class PullRequest:
@@ -6,37 +11,43 @@ class PullRequest:
     Understands pull requests
     """
 
-    def __init__(self, commits: Commits) -> None:
-        self.__commits = commits
+    def __init__(self, repo: Repository) -> None:
+        self.__repo: Repository = repo
+        self.__proposal: Optional[PullRequestProposal] = None
+        self.__commits: Commits = self.__repo.commits()
+        self.__pull_request: PullRequestCodeCommit = PullRequestCodeCommit(
+            repository=repo
+        )
+
+    @property
+    def proposal(self) -> PullRequestProposal:
+        if not self.__proposal:
+            self.__proposal = PullRequestProposal(self.__pull_request, self.__commits)
+
+        return self.__proposal
+
+    @property
+    def title(self) -> str:
+        return self.proposal.title
+
+    @property
+    def description(self) -> str:
+        return self.proposal.description
+
+    @property
+    def link(self) -> str:
+        return self.__pull_request.link
 
     @property
     def has_changes(self) -> bool:
         return True if self.__commits.first else False
 
-    @property
-    def title(self) -> str:
-        if not self.__commits.first:
-            return ""
+    def save(self) -> None:
+        self.__repo.push()
+        self.__pull_request.save(self.title, self.description)
 
-        title = self.__commits.first.message.subject
+    def update(self, title: str, description: str) -> None:
+        self.proposal.update(title=title, description=description)
 
-        if self.__commits.issues:
-            title += f" ({', '.join(self.__commits.issues)})"
-
-        return title
-
-    @property
-    def description(self) -> str:
-        if len(self.__commits) == 1:
-            description = (
-                [self.__commits.first.message.body] if self.__commits.first else []
-            )
-        else:
-            description = list(
-                map(lambda commit: commit.message.subject, self.__commits)
-            )
-
-        if self.__commits.issues:
-            description.append(f"\nIssues: " + ", ".join(self.__commits.issues))
-
-        return "\n".join(description).lstrip("\n")
+    def merge(self) -> str:
+        return self.__pull_request.merge()

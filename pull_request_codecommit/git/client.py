@@ -38,3 +38,12 @@ class Client:
         )
 
         return Commits(messages)
+
+    def checkout(self, destination: str) -> None:
+        self.__execute(["checkout", destination])
+
+    def pull(self) -> None:
+        self.__execute(["pull"])
+
+    def delete_branch(self, branch: str) -> None:
+        self.__execute(["branch", "-d", branch])

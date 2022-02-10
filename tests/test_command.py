@@ -1,5 +1,6 @@
 import json
 from io import TextIOWrapper, BytesIO
+from typing import List, Tuple, Optional, Dict, Any
 from unittest.mock import patch, MagicMock
 
 import pytest
@@ -7,80 +8,99 @@ from click.testing import CliRunner
 from pull_request_codecommit import main
 from pull_request_codecommit.config import configparser
 from pull_request_codecommit.git import Commits
-from .test_git_client import COMMITS, COMMITS_NO_ISSUES
+from tests import SCENARIOS
 
 
 def edit_message(message: str) -> str:
     return message
 
 
+def aws_client_execute_side_effect(parameters, stdout) -> MagicMock:
+    data: Dict[str, Any] = {}
+    assert -1 == stdout
+    mock_stdout = MagicMock()
+
+    if "create-pull-request" in parameters:
+        data = {"pullRequest": {"pullRequestId": "1"}}
+
+    elif "merge-pull-request-by-fast-forward" in parameters:
+        status = "OPEN" if "my-repository-pr-failure" in parameters else "CLOSED"
+        data = {"pullRequest": {"pullRequestStatus": status}}
+
+    elif "list-pull-requests" in parameters:
+        repository_name = next(
+            filter(lambda item: item.startswith("my-repository"), parameters)
+        )
+        pull_request_ids: List[int] = {
+            "my-repository-open-pr": [1],
+            "my-repository-other-open-pr": [2],
+        }.get(repository_name, [])
+
+        data = {"pullRequestIds": list(map(str, pull_request_ids))}
+
+    elif "get-pull-request" in parameters:
+        pull_request_id = int(parameters[parameters.index("--pull-request-id") + 1])
+
+        source = "feat/my-feature" if pull_request_id == 1 else "feat/my-other-feature"
+        destination = "my-main" if pull_request_id == 1 else "my-development"
+
+        data = {
+            "pullRequest": {
+                "pullRequestId": str(pull_request_id),
+                "authorArn": "arn:aws:sts::111122223333:assumed-role/Role/john.doe@acme.com",
+                "title": "feat: update existing pull request support",
+                "description": "Update the existing pull request when a pull request already exists",
+                "pullRequestTargets": [
+                    {
+                        "sourceCommit": "ca45e279EXAMPLE",
+                        "sourceReference": f"refs/heads/{source}",
+                        "mergeBase": "a99f5ddbEXAMPLE",
+                        "destinationReference": f"refs/heads/{destination}",
+                        "mergeMetadata": {"isMerged": "false"},
+                        "destinationCommit": "2abfc6beEXAMPLE",
+                        "repositoryName": "my-repository-open-pr",
+                    }
+                ],
+            }
+        }
+    elif "update-pull-request-description" in parameters:
+        pull_request_id = int(parameters[parameters.index("--pull-request-id") + 1])
+        data = {
+            "pullRequest": {
+                "pullRequestId": str(pull_request_id),
+                "authorArn": "arn:aws:sts::111122223333:assumed-role/Role/john.doe@acme.com",
+            }
+        }
+
+    mock_stdout.stdout = bytes(json.dumps(data), "utf-8")
+    return mock_stdout
+
+
+def generate_invoke_parameters(
+    cli_parameters,
+) -> List[Tuple[str, Optional[str], Optional[str], bytes, str, List[str]]]:
+    """
+    Generate pytest parameters that are used to invoke the test
+    """
+    pytest_parameters = []
+
+    for cli_parameter in cli_parameters:
+        for scenario in SCENARIOS:
+            pytest_parameters.append(scenario + (cli_parameter,))
+
+    return pytest_parameters
+
+
 @pytest.mark.parametrize(
-    "remote, region, profile, config, commits",
-    [
-        (
-            "codecommit::eu-west-1://my-profile@my-repository",
-            "eu-west-1",
-            "my-profile",
-            b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
-            COMMITS,
-        ),
-        (
-            "codecommit::eu-west-1://my-profile@my-repository",
-            "eu-central-1",
-            "my-profile",
-            b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
-            COMMITS_NO_ISSUES,
-        ),
-        (
-            "codecommit::eu-west-1://my-profile@my-repository",
-            "eu-west-1",
-            "my-other-profile",
-            b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
-            COMMITS_NO_ISSUES,
-        ),
-        (
-            "codecommit::eu-west-1://my-profile@my-repository",
-            "eu-central-1",
-            "my-other-profile",
-            b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
-            COMMITS,
-        ),
-        (
-            "codecommit::eu-west-1://my-repository",
-            "eu-central-1",
-            None,
-            b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
-            COMMITS,
-        ),
-        (
-            "codecommit::://my-profile@my-repository",
-            None,
-            "my-profile",
-            b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
-            COMMITS,
-        ),
-        (
-            "codecommit::://my-repository",
-            None,
-            None,
-            b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
-            COMMITS,
-        ),
-        (
-            "codecommit://my-profile@my-repository",
-            None,
-            "my-profile",
-            b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
-            COMMITS,
-        ),
-        (
-            "codecommit://my-repository",
-            None,
-            None,
-            b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master",
-            COMMITS,
-        ),
-    ],
+    "remote, region, profile, config, commits, parameters",
+    generate_invoke_parameters(
+        [
+            [],
+            ["--auto-merge"],
+            ["-b", "my-target-branch"],
+            ["--branch", "my-target-branch"],
+        ]
+    ),
 )
 @patch("pull_request_codecommit.aws.client.subprocess.run")
 @patch("pull_request_codecommit.repository.GitClient")
@@ -94,25 +114,19 @@ def test_invoke(
     profile: str,
     config: bytes,
     commits: str,
+    parameters: List[str],
 ) -> None:
     mock_edit.side_effect = edit_message
     mock_git_client.return_value.get_commit_messages.return_value = Commits(commits)
 
     mock_git_client.return_value.remote.return_value = remote
-    mock_git_client.return_value.current_branch.return_value = "feat/my-feature"
+    mock_git_client.return_value.current_branch = "feat/my-feature"
+
     configparser.open = MagicMock(return_value=TextIOWrapper(BytesIO(config)))  # type: ignore
-
-    def execute(parameters, stdout):
-        assert -1 == stdout
-        mock_stdout = MagicMock()
-        data = {"pullRequest": {"pullRequestId": 1}}
-        mock_stdout.stdout = bytes(json.dumps(data), "utf-8")
-        return mock_stdout
-
-    mock_aws_client.side_effect = execute
+    mock_aws_client.side_effect = aws_client_execute_side_effect
 
     runner = CliRunner()
-    result = runner.invoke(main, [])
+    result = runner.invoke(main, parameters)
     assert result.exit_code == 0
 
 
@@ -180,15 +194,7 @@ def test_invoke_with_path(
     )
     mock_git_client.return_value.current_branch.return_value = "feat/my-feature"
     configparser.open = MagicMock(return_value=TextIOWrapper(BytesIO(config)))  # type: ignore
-
-    def execute(parameters, stdout):
-        assert -1 == stdout
-        mock_stdout = MagicMock()
-        data = {"pullRequest": {"pullRequestId": 1}}
-        mock_stdout.stdout = bytes(json.dumps(data), "utf-8")
-        return mock_stdout
-
-    mock_aws_client.side_effect = execute
+    mock_aws_client.side_effect = aws_client_execute_side_effect
 
     runner = CliRunner()
     result = runner.invoke(main, ["--repository-path", "./some/path/to/repo"])
@@ -207,11 +213,13 @@ def test_invoke_github(mock_git_client: MagicMock) -> None:
     assert result.exit_code == 1
 
 
+@patch("pull_request_codecommit.aws.client.subprocess.run")
 @patch("pull_request_codecommit.repository.GitClient")
 @patch("pull_request_codecommit.click.edit")
 def test_invoke_quit_edit(
     mock_edit: MagicMock,
     mock_git_client: MagicMock,
+    mock_aws_client: MagicMock,
 ) -> None:
     mock_edit.return_value = None
     mock_git_client.return_value.remote.return_value = (
@@ -220,9 +228,12 @@ def test_invoke_quit_edit(
     mock_git_client.return_value.current_branch.return_value = "feat/my-feature"
     config = b"[default]\nbranch: my-main\n[profile my-profile]\nbranch: my-master"
     configparser.open = MagicMock(return_value=TextIOWrapper(BytesIO(config)))  # type: ignore
+    mock_aws_client.side_effect = aws_client_execute_side_effect
 
     runner = CliRunner()
     result = runner.invoke(main)
+    assert type(result.exception) == SystemExit
+    assert "Pull request was not created" in result.output
     assert result.exit_code == 1
 
 
