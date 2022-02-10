@@ -6,8 +6,6 @@
 [![Continuous Integration](https://github.com/Nr18/pull-request-codecommit/actions/workflows/ci.yml/badge.svg)](https://github.com/Nr18/pull-request-codecommit/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/Nr18/pull-request-codecommit/branch/main/graph/badge.svg?token=H6zsiLbNjP)](https://codecov.io/gh/Nr18/pull-request-codecommit)
 
-> Note, this project is still under development and is not functional yet!
-
 This tool makes it easy to create pull requests for [AWS CodeCommit](https://aws.amazon.com/codecommit/). It relies on the
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) standard. It looks at the git commits between the
 current and the destination branch. Then it tries to create a pull request with this information as input.
