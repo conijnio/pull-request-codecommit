@@ -119,7 +119,9 @@ class Client:
 
         return data.get("pullRequest")
 
-    def merge_pull_request(self, repository: str, pull_request_id: int) -> dict:
+    def merge_pull_request(
+        self, repository: str, pull_request_id: int, branch: str
+    ) -> dict:
         response = self.__execute(
             [
                 "codecommit",
@@ -131,5 +133,18 @@ class Client:
             ]
         )
         data = json.loads(response)
+        pull_request = data.get("pullRequest")
 
-        return data.get("pullRequest")
+        if pull_request.get("pullRequestStatus", "") == "CLOSED":
+            self.__execute(
+                [
+                    "codecommit",
+                    "delete-branch",
+                    "--repository-name",
+                    repository,
+                    "--branch-name",
+                    branch,
+                ]
+            )
+
+        return pull_request
