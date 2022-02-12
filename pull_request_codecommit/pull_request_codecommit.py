@@ -65,6 +65,7 @@ class PullRequestCodeCommit:
         response = self.__client.merge_pull_request(
             repository=self.__repo.remote.name,
             pull_request_id=self.pull_request_id,
+            branch=self.__repo.branch,
         )
         status = response.get("pullRequestStatus", "")
 
