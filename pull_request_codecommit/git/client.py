@@ -34,7 +34,7 @@ class Client:
 
     def get_commit_messages(self, destination_branch: str) -> Commits:
         messages = self.__execute(
-            ["log", f"{destination_branch}..{self.current_branch}"]
+            ["log", f"origin/{destination_branch}..{self.current_branch}"]
         )
 
         return Commits(messages)
