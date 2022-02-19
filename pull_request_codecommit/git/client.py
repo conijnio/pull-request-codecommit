@@ -33,14 +33,18 @@ class Client:
         return self.__execute(["branch", "--show-current"])
 
     def get_commit_messages(self, destination_branch: str) -> Commits:
+        self.fetch()
         messages = self.__execute(
-            ["log", f"origin/{destination_branch}..{self.current_branch}"]
+            ["log", f"origin/{destination_branch}..origin/{self.current_branch}"]
         )
 
         return Commits(messages)
 
     def checkout(self, destination: str) -> None:
         self.__execute(["checkout", destination])
+
+    def fetch(self) -> None:
+        self.__execute(["fetch"])
 
     def pull(self) -> None:
         self.__execute(["pull"])
