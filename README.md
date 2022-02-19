@@ -15,7 +15,13 @@ current and the destination branch. Then it tries to create a pull request with 
 You can install the `pull-request-codecommit` tool by running the following command:
 
 ```bash
-pip install pull_request_codecommit
+pip install pull-request-codecommit
+```
+
+You can update an existing installation with the following command:
+
+```bash
+pip install --upgrade pull-request-codecommit
 ```
 
 ### Installation in venv
@@ -26,7 +32,7 @@ using the following commands:
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install pull_request_codecommit
+pip install pull-request-codecommit
 ```
 
 ## Configuration
