@@ -30,11 +30,13 @@ def test_remote(
 ) -> None:
     mock_isdir.return_value = True
 
-    def execute(parameters, cwd, stdout):
+    def execute(parameters, cwd, stdout, stderr):
         assert path == cwd
         assert -1 == stdout
+        assert -1 == stderr
         mock_stdout = MagicMock()
         mock_stdout.stdout = bytes(f"\n\n{remote}\n\n", "utf-8")
+        mock_stdout.returncode = 0
         return mock_stdout
 
     mock_run.side_effect = execute
@@ -62,11 +64,13 @@ def test_current_branch(
 ) -> None:
     mock_isdir.return_value = True
 
-    def execute(parameters, cwd, stdout):
+    def execute(parameters, cwd, stdout, stderr):
         assert path == cwd
         assert -1 == stdout
+        assert -1 == stderr
         mock_stdout = MagicMock()
         mock_stdout.stdout = bytes(f"\n\n{branch}\n\n", "utf-8")
+        mock_stdout.returncode = 0
         return mock_stdout
 
     mock_run.side_effect = execute
@@ -91,11 +95,13 @@ def test_get_commit_messages(
 ) -> None:
     mock_isdir.return_value = True
 
-    def execute(parameters, cwd, stdout):
+    def execute(parameters, cwd, stdout, stderr):
         assert path == cwd
         assert -1 == stdout
+        assert -1 == stderr
         mock_stdout = MagicMock()
         mock_stdout.stdout = bytes(COMMITS, "utf-8")
+        mock_stdout.returncode = 0
         return mock_stdout
 
     mock_run.side_effect = execute
@@ -116,10 +122,12 @@ def test_get_commit_messages(
 def test_get_no_commit_messages(mock_isdir: MagicMock, mock_run: MagicMock) -> None:
     mock_isdir.return_value = True
 
-    def execute(parameters, cwd, stdout):
+    def execute(parameters, cwd, stdout, stderr):
         assert -1 == stdout
+        assert -1 == stderr
         mock_stdout = MagicMock()
         mock_stdout.stdout = bytes("", "utf-8")
+        mock_stdout.returncode = 0
         return mock_stdout
 
     mock_run.side_effect = execute
@@ -134,11 +142,13 @@ def test_get_no_commit_messages(mock_isdir: MagicMock, mock_run: MagicMock) -> N
 def test_push(mock_isdir: MagicMock, mock_run: MagicMock) -> None:
     mock_isdir.return_value = True
 
-    def execute(parameters, cwd, stdout):
+    def execute(parameters, cwd, stdout, stderr):
         assert parameters == ["git", "push", "--set-upstream", "origin", "HEAD"]
         assert -1 == stdout
+        assert -1 == stderr
         mock_stdout = MagicMock()
         mock_stdout.stdout = bytes("", "utf-8")
+        mock_stdout.returncode = 0
         return mock_stdout
 
     mock_run.side_effect = execute
@@ -150,11 +160,13 @@ def test_push(mock_isdir: MagicMock, mock_run: MagicMock) -> None:
 def test_pull(mock_isdir: MagicMock, mock_run: MagicMock) -> None:
     mock_isdir.return_value = True
 
-    def execute(parameters, cwd, stdout):
+    def execute(parameters, cwd, stdout, stderr):
         assert parameters == ["git", "pull"]
         assert -1 == stdout
+        assert -1 == stderr
         mock_stdout = MagicMock()
         mock_stdout.stdout = bytes("", "utf-8")
+        mock_stdout.returncode = 0
         return mock_stdout
 
     mock_run.side_effect = execute
@@ -166,11 +178,13 @@ def test_pull(mock_isdir: MagicMock, mock_run: MagicMock) -> None:
 def test_delete_branch(mock_isdir: MagicMock, mock_run: MagicMock) -> None:
     mock_isdir.return_value = True
 
-    def execute(parameters, cwd, stdout):
+    def execute(parameters, cwd, stdout, stderr):
         assert parameters == ["git", "branch", "-d", "feat/my-feature"]
         assert -1 == stdout
+        assert -1 == stderr
         mock_stdout = MagicMock()
         mock_stdout.stdout = bytes("", "utf-8")
+        mock_stdout.returncode = 0
         return mock_stdout
 
     mock_run.side_effect = execute
@@ -182,12 +196,36 @@ def test_delete_branch(mock_isdir: MagicMock, mock_run: MagicMock) -> None:
 def test_checkout(mock_isdir: MagicMock, mock_run: MagicMock) -> None:
     mock_isdir.return_value = True
 
-    def execute(parameters, cwd, stdout):
+    def execute(parameters, cwd, stdout, stderr):
         assert parameters == ["git", "checkout", "master"]
         assert -1 == stdout
+        assert -1 == stderr
         mock_stdout = MagicMock()
         mock_stdout.stdout = bytes("", "utf-8")
+        mock_stdout.returncode = 0
         return mock_stdout
 
     mock_run.side_effect = execute
     Client("my-path").checkout("master")
+
+
+@patch("pull_request_codecommit.git.client.subprocess.run")
+@patch("pull_request_codecommit.git.client.os.path.isdir")
+def test_git_failure(mock_isdir: MagicMock, mock_run: MagicMock) -> None:
+    mock_isdir.return_value = True
+
+    def execute(parameters, cwd, stdout, stderr):
+        assert parameters == ["git", "checkout", "master"]
+        assert -1 == stdout
+        assert -1 == stderr
+        mock_stdout = MagicMock()
+        mock_stdout.stderr = bytes("some git failure", "utf-8")
+        mock_stdout.returncode = 1
+        return mock_stdout
+
+    mock_run.side_effect = execute
+
+    with pytest.raises(Exception) as exception:
+        Client("my-path").checkout("master")
+
+    assert "some git failure" in str(exception.value)
