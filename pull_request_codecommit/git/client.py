@@ -18,9 +18,22 @@ class Client:
 
     def __execute(self, parameters: List[str]) -> str:
         parameters.insert(0, "git")
-        response = subprocess.run(parameters, cwd=self.__path, stdout=subprocess.PIPE)
+        response = subprocess.run(
+            parameters, cwd=self.__path, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
+
+        if response.returncode != 0:
+            last_line = self.__resolve_error_message(response.stderr)
+            command = " ".join(parameters)
+            raise Exception(
+                f"Failed to execute: `{command}`\n\n{last_line}\n\nYou can execute the command manually to troubleshoot!"
+            )
 
         return response.stdout.decode("utf-8").strip("\n")
+
+    def __resolve_error_message(self, stderr: bytes) -> str:
+        message = stderr.decode("utf-8").strip("\n")
+        return message.splitlines()[-1]
 
     def remote(self, name: str = "origin") -> str:
         return self.__execute(["config", "--get", f"remote.{name}.url"])

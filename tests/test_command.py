@@ -15,10 +15,11 @@ def edit_message(message: str) -> str:
     return message
 
 
-def aws_client_execute_side_effect(parameters, stdout) -> MagicMock:
+def aws_client_execute_side_effect(parameters, stdout, stderr) -> MagicMock:
     data: Dict[str, Any] = {}
     assert -1 == stdout
     mock_stdout = MagicMock()
+    mock_stdout.returncode = 0
 
     if "create-pull-request" in parameters:
         data = {"pullRequest": {"pullRequestId": "1"}}
@@ -250,3 +251,42 @@ def test_invoke_no_repository_name(
     result = runner.invoke(main)
     assert result.exit_code == 1
     assert "Error: The repository is not compatible with this tool!" in result.output
+
+
+@pytest.mark.parametrize(
+    "remote, region, profile, config, commits, parameters",
+    generate_invoke_parameters([[]]),
+)
+@patch("pull_request_codecommit.aws.client.subprocess.run")
+@patch("pull_request_codecommit.repository.GitClient")
+@patch("pull_request_codecommit.click.edit")
+def test_aws_failure(
+    mock_edit: MagicMock,
+    mock_git_client: MagicMock,
+    mock_aws_client: MagicMock,
+    remote: str,
+    region: str,
+    profile: str,
+    config: bytes,
+    commits: str,
+    parameters: List[str],
+) -> None:
+    mock_edit.side_effect = edit_message
+    mock_git_client.return_value.get_commit_messages.return_value = Commits(commits)
+
+    mock_git_client.return_value.remote.return_value = remote
+    mock_git_client.return_value.current_branch = "feat/my-feature"
+
+    def side_effect(parameters, stdout, stderr):
+        data = {}
+        mock_stdout = MagicMock()
+        mock_stdout.stderr = bytes("Some aws failure", "utf-8")
+        mock_stdout.returncode = 1
+        return mock_stdout
+
+    configparser.open = MagicMock(return_value=TextIOWrapper(BytesIO(config)))  # type: ignore
+    mock_aws_client.side_effect = side_effect
+
+    runner = CliRunner()
+    result = runner.invoke(main, parameters)
+    assert result.exit_code == 1

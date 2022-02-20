@@ -32,7 +32,16 @@ class Client:
     def __execute(self, parameters: List[str]) -> str:
         command = self.base_command
         command.extend(parameters)
-        response = subprocess.run(command, stdout=subprocess.PIPE)
+        response = subprocess.run(
+            command, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
+
+        if response.returncode != 0:
+            message = response.stderr.decode("utf-8").strip("\n")
+            last_line = message.splitlines()[-1]
+            raise Exception(
+                f"Failed to execute: `{command}`\n\n{last_line}\n\nYou can execute the command manually to troubleshoot!"
+            )
 
         return response.stdout.decode("utf-8").strip("\n")
 
