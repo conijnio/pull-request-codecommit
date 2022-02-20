@@ -16,13 +16,16 @@ def main(
     """
     pull-request-codecommit
     """
-    repo = __load_repository(repository_path=repository_path, target_branch=branch)
-    __display_repository_information(repo)
-    pr = __create_pull_request(repo)
+    try:
+        repo = __load_repository(repository_path=repository_path, target_branch=branch)
+        __display_repository_information(repo)
+        pr = __create_pull_request(repo)
 
-    if auto_merge:
-        status = pr.merge()
-        click.echo(f"Auto merging resulted in: {status}")
+        if auto_merge:
+            status = pr.merge()
+            click.echo(f"Auto merging resulted in: {status}")
+    except Exception as exception:
+        raise click.ClickException(str(exception))
 
 
 def __load_repository(
