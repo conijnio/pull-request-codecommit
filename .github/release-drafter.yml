@@ -16,6 +16,8 @@ categories:
     label: 'bug'
   - title: '🧰 Maintenance'
     label: 'maintenance'
+  - title: '🛠 Dependencies'
+    label: 'dependencies'
   - title: '📚 Documentation'
     label: 'documentation'
 
@@ -31,24 +33,27 @@ version-resolver:
       - 'bug'
       - 'maintenance'
       - 'documentation'
+      - 'dependencies'
 
 autolabeler:
   - label: 'feature'
     title:
-      - '/feat:/i'
+      - '/feat/i'
   - label: 'documentation'
     title:
-      - '/docs:/i'
+      - '/docs/i'
   - label: 'bug'
     title:
-      - '/fix:/i'
+      - '/fix/i'
   - label: 'maintenance'
     title:
-      - '/chore:/i'
-      - '/refactor:/i'
-      - '/style:/i'
-      - '/test:/i'
-      - '/perf:/i'
-
+      - '/chore/i'
+      - '/refactor/i'
+      - '/style/i'
+      - '/test/i'
+      - '/perf/i'
+  - label: 'dependencies'
+    title:
+      - '/chore\(deps-dev\)/i'
 exclude-labels:
   - 'skip-changelog'

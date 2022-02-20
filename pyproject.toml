@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pull-request-codecommit"
-version = "0.4.0"
+version = "0.4.1"
 description = "pull-request-codecommit creates a PR within CodeCommit based on your commit messages."
 authors = ["Joris Conijn <joris@conijnonline.nl>"]
 license = "MIT"
@@ -11,13 +11,13 @@ click = "^8.0.3"
 
 [tool.poetry.dev-dependencies]
 black = "^21.9b0"
-mypy = "^0.910"
+mypy = "^0.931"
 pytest = "^6.2.5"
 pytest-cov = "^3.0.0"
-pytest-mypy = "^0.8.1"
+pytest-mypy = "^0.9.1"
 toml = "^0.10.2"
-types-toml = "^0.10.1"
-twine = "^3.4.2"
+types-toml = "^0.10.4"
+twine = "^3.8.0"
 xenon = "^0.8.0"
 radon = "^5.1.0"
 

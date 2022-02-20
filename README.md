@@ -35,6 +35,8 @@ source .venv/bin/activate
 pip install pull-request-codecommit
 ```
 
+You need to add the `.venv/bin/` path to your system `PATH`. This is needed for the `git pr` commands to function.
+
 ## Configuration
 
 The tool uses the following file `~/.aws/pull-request-codecommit`. It will first load the `default` profile and then, if
@@ -53,24 +55,12 @@ branch=develop
 To use `pull-request-codecommit` you just execute the following command:
 
 ```bash
-pull-request-codecommit
-```
-
-Or:
-
-```bash
 git pr
 ```
 
 ### Auto merge
 
 In some cases it makes sense to directly merge the pull request, in those cases you can use:
-
-```bash
-pull-request-codecommit --auto-merge
-```
-
-Or:
 
 ```bash
 git pr --auto-merge
@@ -95,17 +85,5 @@ When a pull requests exists a proposal is made to update the existing pull reque
 When you want to overwrite the target branch you need to supply the `--branch <name>` option:
 
 ```bash
-pull-request-codecommit --branch my-target-branch
-```
-
-Or:
-
-```bash
 git pr --branch my-target-branch
-```
-
-## Testing locally
-
-```bash
-./create_repo.sh
 ```
