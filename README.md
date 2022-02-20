@@ -56,12 +56,24 @@ To use `pull-request-codecommit` you just execute the following command:
 pull-request-codecommit
 ```
 
+Or:
+
+```bash
+git pr
+```
+
 ### Auto merge
 
 In some cases it makes sense to directly merge the pull request, in those cases you can use:
 
 ```bash
 pull-request-codecommit --auto-merge
+```
+
+Or:
+
+```bash
+git pr --auto-merge
 ```
 
 This will directly merge the pull request using the fast-forward merge strategy.
@@ -84,6 +96,12 @@ When you want to overwrite the target branch you need to supply the `--branch <n
 
 ```bash
 pull-request-codecommit --branch my-target-branch
+```
+
+Or:
+
+```bash
+git pr --branch my-target-branch
 ```
 
 ## Testing locally

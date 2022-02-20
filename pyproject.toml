@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pull-request-codecommit"
-version = "0.3.2"
+version = "0.4.0"
 description = "pull-request-codecommit creates a PR within CodeCommit based on your commit messages."
 authors = ["Joris Conijn <joris@conijnonline.nl>"]
 license = "MIT"
@@ -23,6 +23,7 @@ radon = "^5.1.0"
 
 [tool.poetry.scripts]
 pull-request-codecommit = "pull_request_codecommit:main"
+git-pr = "pull_request_codecommit:main"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
