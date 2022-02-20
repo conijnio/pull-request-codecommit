@@ -87,9 +87,3 @@ When you want to overwrite the target branch you need to supply the `--branch <n
 ```bash
 git pr --branch my-target-branch
 ```
-
-## Testing locally
-
-```bash
-./create_repo.sh
-```
