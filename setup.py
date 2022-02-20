@@ -22,11 +22,11 @@ setuptools.setup(
     packages=setuptools.find_packages(where="."),
     install_requires=[
         "click==8.0.3",
-        "junit-xml==1.9",
     ],
     entry_points={
         "console_scripts": [
             "pull-request-codecommit = pull_request_codecommit:main",
+            "git-pr = pull_request_codecommit:main",
         ],
     },
     python_requires=">=3.8",
