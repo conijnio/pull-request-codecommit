@@ -43,7 +43,6 @@ class PullRequest:
         return True if self.__commits.first else False
 
     def save(self) -> None:
-        self.__repo.push()
         self.__pull_request.save(self.title, self.description)
 
     def update(self, title: str, description: str) -> None:
