@@ -46,10 +46,8 @@ class Repository:
         return self.__target_branch
 
     def commits(self) -> Commits:
-        return self.__git.get_commit_messages(destination_branch=self.destination)
-
-    def push(self) -> None:
         self.__git.push()
+        return self.__git.get_commit_messages(destination_branch=self.destination)
 
     def checkout_destination(self) -> None:
         branch = self.branch
