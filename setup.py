@@ -21,7 +21,7 @@ setuptools.setup(
     package_dir={"": "."},
     packages=setuptools.find_packages(where="."),
     install_requires=[
-        "click==8.0.4",
+        "click==8.1.3",
     ],
     entry_points={
         "console_scripts": [
