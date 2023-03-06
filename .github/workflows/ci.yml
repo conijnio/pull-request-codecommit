@@ -30,6 +30,10 @@ jobs:
           path: ~/.cache/pypoetry/virtualenvs
           key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
       - run: poetry --version
+      - name: Prepare variables
+        id: vars
+        run: |
+          echo "version=$(awk '/version/{print $NF}'  pyproject.toml | sed 's/\"//g')" >> $GITHUB_OUTPUT
       - name: Install dependencies
         run: make install
       - name: Run check
