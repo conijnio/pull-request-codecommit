@@ -5,6 +5,8 @@ import click
 from .pull_request import PullRequest
 from .repository import Repository
 
+__version__ = "0.5.1"
+
 
 @click.command()
 @click.option("-r", "--repository-path", default=None)
