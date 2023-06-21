@@ -1,0 +1,10 @@
+# Changelog
+
+<!--next-version-placeholder-->
+
+## v0.5.2 (2023-06-21)
+
+### Fix
+
+* Semantic versioning ([`8c49d5f`](https://github.com/Nr18/pull-request-codecommit/commit/8c49d5f37cf00b8f0762d26a07da62ec6306c848))
+* Make target ([`a7c9f8e`](https://github.com/Nr18/pull-request-codecommit/commit/a7c9f8e061c5e8581692b61a6be6c009964daa5d))
