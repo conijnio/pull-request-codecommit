@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.5.3 (2023-07-11)
+
+### Fix
+
+* Ignore click decorator and remove unused main() call ([`c523046`](https://github.com/Nr18/pull-request-codecommit/commit/c523046e263fbf9b2ce394fe8d9c022342526547))
+
 ## v0.5.2 (2023-06-21)
 
 ### Fix

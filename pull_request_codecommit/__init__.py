@@ -5,7 +5,7 @@ import click
 from .pull_request import PullRequest
 from .repository import Repository
 
-__version__ = "0.5.2"
+__version__ = "0.5.3"
 
 
 @click.command()  # type: ignore
