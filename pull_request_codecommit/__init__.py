@@ -8,7 +8,7 @@ from .repository import Repository
 __version__ = "0.5.2"
 
 
-@click.command()
+@click.command()  # type: ignore
 @click.option("-r", "--repository-path", default=None)
 @click.option("-b", "--branch", default=None)
 @click.option("--auto-merge/--no-auto-merge", default=False)
@@ -80,7 +80,3 @@ def __propose_title_description(pr: PullRequest) -> None:
     description = "\n".join(message.splitlines()[1:]).lstrip("\n")
 
     pr.update(title, description)
-
-
-if __name__ == "__main__":
-    main()
