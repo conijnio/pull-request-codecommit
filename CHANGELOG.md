@@ -2,59 +2,13 @@
 
 
 
-## v0.6.0 (2024-03-04)
+## v0.5.4 (2024-03-04)
 
 ### Chore
 
-* chore: version bump (#191)
-
-**Issue #, if available:**
-
-## Description of changes:
-
-&lt;!--- One or two sentences as a summary of what&#39;s being changed --&gt;
-
-**Checklist**
-
-&lt;!--- Leave unchecked if your change doesn&#39;t seem to apply --&gt;
-
-* [x] Update tests
-* [x] Update docs
-* [x] PR title follows [conventional commit
-semantics](https://www.conventionalcommits.org/en/v1.0.0-beta.2/#commit-message-for-a-fix-using-an-optional-issue-number)
-
-By submitting this pull request, I confirm that you can use, modify,
-copy, and redistribute this contribution, under the terms of your
-choice. ([`6f99c1b`](https://github.com/conijnio/pull-request-codecommit/commit/6f99c1b9f5de76223b68c7a6d18fdabec10c0531))
-
-* chore: version bump ([`b46cc76`](https://github.com/conijnio/pull-request-codecommit/commit/b46cc76876ba5cbef05ee4d0734ba14454318529))
-
-* chore: move repository to organization (#190)
-
-**Issue #, if available:**
-
-## Description of changes:
-
-I want to manage the open source repos that I maintain from an
-organization.
-
-
-**Checklist**
-
-&lt;!--- Leave unchecked if your change doesn&#39;t seem to apply --&gt;
-
-* [x] Update tests
-* [x] Update docs
-* [x] PR title follows [conventional commit
-semantics](https://www.conventionalcommits.org/en/v1.0.0-beta.2/#commit-message-for-a-fix-using-an-optional-issue-number)
-
-By submitting this pull request, I confirm that you can use, modify,
-copy, and redistribute this contribution, under the terms of your
-choice. ([`9f74770`](https://github.com/conijnio/pull-request-codecommit/commit/9f747705ed4d71bd32768993eb82b474144c11fe))
-
 * chore: move repository to organization
 
-I want to manage the open source repos that I maintain from an organization. ([`1c48529`](https://github.com/conijnio/pull-request-codecommit/commit/1c4852963e0571ac260fef77c2cdfc6f4b3df5d4))
+I want to manage the open source repos that I maintain from an organization. ([`81f22ba`](https://github.com/conijnio/pull-request-codecommit/commit/81f22ba47a72c2682f6baa70923a38659a5b69e7))
 
 * chore(deps-dev): bump pytest from 8.0.2 to 8.1.0 (#189)
 
@@ -4697,11 +4651,9 @@ updated-dependencies:
 
 Signed-off-by: dependabot[bot] &lt;support@github.com&gt; ([`b64eed6`](https://github.com/conijnio/pull-request-codecommit/commit/b64eed6e6cfe7fba4a8ee98a9e1c0fc1ea04b1e8))
 
-### Feature
+### Fix
 
-* feat: trigger release ([`699ff7e`](https://github.com/conijnio/pull-request-codecommit/commit/699ff7e5c5975897efbe425f654d6a37c555e971))
-
-* feat: release procedure ([`b57e0ef`](https://github.com/conijnio/pull-request-codecommit/commit/b57e0ef0be1e85dc7785dd3c21df831a8f256893))
+* fix: release instructions ([`d101526`](https://github.com/conijnio/pull-request-codecommit/commit/d1015264f029ebf9e85231c745e78b0b278dfdb1))
 
 ### Unknown
 
