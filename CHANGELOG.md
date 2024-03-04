@@ -2,6 +2,15 @@
 
 
 
+## v0.5.5 (2024-03-04)
+
+### Chore
+
+* chore: tweak release ([`5f3f5a4`](https://github.com/conijnio/pull-request-codecommit/commit/5f3f5a40a1107ee2ef00908dac65c23fb93cfdc9))
+
+* chore: remove built command ([`d6fd3ec`](https://github.com/conijnio/pull-request-codecommit/commit/d6fd3ece0bfdcb8f3e3c1f594b5ebd2daff7e093))
+
+
 ## v0.5.4 (2024-03-04)
 
 ### Chore
