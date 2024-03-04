@@ -15,4 +15,6 @@ reported the issue. Please try to include as much information as you can.
 
 ## Releases
 
+> NOTE: I created a `GH_TOKEN` variable that contains a personal access token that will expires on Jun 2 2024.
+
 Versioning is handled by the `python-semantic-release` when a `fix` or `feat` is committed a new release is automatically created.
