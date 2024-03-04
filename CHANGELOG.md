@@ -2,6 +2,13 @@
 
 
 
+## v0.5.12 (2024-03-04)
+
+### Chore
+
+* chore: support newer python versions ([`0aeb257`](https://github.com/conijnio/pull-request-codecommit/commit/0aeb25736fe3fcb8b97835543018ee977ecdcd91))
+
+
 ## v0.5.11 (2024-03-04)
 
 ### Chore
