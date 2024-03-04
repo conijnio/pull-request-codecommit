@@ -6,6 +6,8 @@
 
 ### Chore
 
+* chore: tweak semantic release config ([`5e916b9`](https://github.com/conijnio/pull-request-codecommit/commit/5e916b95f9522c115941684dac08949365864b02))
+
 * chore: move repository to organization
 
 I want to manage the open source repos that I maintain from an organization. ([`81f22ba`](https://github.com/conijnio/pull-request-codecommit/commit/81f22ba47a72c2682f6baa70923a38659a5b69e7))
