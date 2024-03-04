@@ -55,10 +55,12 @@ class PullRequestCodeCommit:
         return self.__repo.remote.pull_request_url(self.pull_request_id)
 
     def save(self, title: str, description: str):
-        self.__update(
-            description=self.__markdown_conversion(description)
-        ) if self.pull_request_id != 0 else self.__create(
-            title=title, description=self.__markdown_conversion(description)
+        (
+            self.__update(description=self.__markdown_conversion(description))
+            if self.pull_request_id != 0
+            else self.__create(
+                title=title, description=self.__markdown_conversion(description)
+            )
         )
 
     def merge(self) -> str:

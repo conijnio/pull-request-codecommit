@@ -1,10 +1,10 @@
 # pull-request-codecommit
 
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE.md)
-[![Maintenance](https://img.shields.io/badge/Maintained-yes-green.svg)](https://github.com/Nr18/pull-request-codecommit/graphs/commit-activity)
-[![GitHub release](https://img.shields.io/github/release/Nr18/pull-request-codecommit.svg)](https://github.com/Nr18/pull-request-codecommit/releases/)
-[![Continuous Integration](https://github.com/Nr18/pull-request-codecommit/actions/workflows/ci.yml/badge.svg)](https://github.com/Nr18/pull-request-codecommit/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/Nr18/pull-request-codecommit/branch/main/graph/badge.svg?token=H6zsiLbNjP)](https://codecov.io/gh/Nr18/pull-request-codecommit)
+[![Maintenance](https://img.shields.io/badge/Maintained-yes-green.svg)](https://github.com/conijnio/pull-request-codecommit/graphs/commit-activity)
+[![GitHub release](https://img.shields.io/github/release/conijnio/pull-request-codecommit.svg)](https://github.com/conijnio/pull-request-codecommit/releases/)
+[![Continuous Integration](https://github.com/conijnio/pull-request-codecommit/actions/workflows/ci.yml/badge.svg)](https://github.com/conijnio/pull-request-codecommit/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/conijnio/pull-request-codecommit/branch/main/graph/badge.svg?token=H6zsiLbNjP)](https://codecov.io/gh/conijnio/pull-request-codecommit)
 
 This tool makes it easy to create pull requests for [AWS CodeCommit](https://aws.amazon.com/codecommit/). It relies on the
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) standard. It looks at the git commits between the

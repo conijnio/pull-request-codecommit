@@ -205,7 +205,7 @@ def test_invoke_with_path(
 @patch("pull_request_codecommit.repository.GitClient")
 def test_invoke_github(mock_git_client: MagicMock) -> None:
     mock_git_client.return_value.remote.return_value = (
-        "git@github.com:Nr18/pull-request-codecommit.git"
+        "git@github.com:conijnio/pull-request-codecommit.git"
     )
     mock_git_client.return_value.current_branch.return_value = "feat/my-feature"
 
