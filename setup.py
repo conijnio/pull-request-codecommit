@@ -17,7 +17,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     author="Joris Conijn",
     author_email="joris@conijnonline.nl",
-    url="https://github.com/Nr18/pull-request-codecommit",
+    url="https://github.com/conijnio/pull-request-codecommit",
     package_dir={"": "."},
     packages=setuptools.find_packages(where="."),
     install_requires=[
