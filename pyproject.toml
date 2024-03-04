@@ -31,46 +31,11 @@ version_variables = [
     "pull_request_codecommit/__init__.py:__version__",
     "pyproject.toml:version"
 ]
-upload_to_pypi = true
-upload_to_release = true
-
-[tool.semantic_release.publish]
-upload_to_vcs_release = true
-
-[tool.semantic_release.commit_author]
-env = "GIT_COMMIT_AUTHOR"
-default = "semantic-release <semantic-release>"
 
 [tool.semantic_release.commit_parser_options]
-allowed_tags = [
-    "build",
-    "chore",
-    "ci",
-    "docs",
-    "feat",
-    "fix",
-    "perf",
-    "style",
-    "refactor",
-    "test",
-]
+allowed_tags = [ "build", "chore", "ci", "docs", "feat", "fix", "perf", "style", "refactor", "test" ]
 minor_tags = ["feat"]
-patch_tags = [
-    "build",
-    "chore",
-    "ci",
-    "docs",
-    "fix",
-    "perf",
-    "style",
-    "refactor",
-    "test",
-]
-
-[tool.semantic_release.remote]
-name = "origin"
-type = "github"
-ignore_token_for_push = false
+patch_tags = [ "chore", "docs", "fix", "perf", "style", "refactor", "test" ]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

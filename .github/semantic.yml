@@ -11,8 +11,6 @@ types:
   - build
   - ci
   - chore
-  - revert
-  - improv
 
 # Always validate the PR title
 # and ignore the commits to lower the entry bar for contribution
