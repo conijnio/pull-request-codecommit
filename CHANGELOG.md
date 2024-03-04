@@ -2,6 +2,13 @@
 
 
 
+## v0.5.7 (2024-03-04)
+
+### Chore
+
+* chore: add built command ([`67a4ca4`](https://github.com/conijnio/pull-request-codecommit/commit/67a4ca47fe81d03ffbf2ca32d5f605533aa3f07c))
+
+
 ## v0.5.6 (2024-03-04)
 
 ### Chore
