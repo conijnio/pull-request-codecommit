@@ -54,9 +54,8 @@ jobs:
           fetch-depth: 0
       - name: Python Semantic Release
         uses: python-semantic-release/python-semantic-release@master
-        # with:
-        #   # We are using a GH_TOKEN from the organization
-        #   github_token: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
