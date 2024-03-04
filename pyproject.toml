@@ -27,14 +27,48 @@ pull-request-codecommit = "pull_request_codecommit:main"
 git-pr = "pull_request_codecommit:main"
 
 [tool.semantic_release]
-version_variable = [
+version_variables = [
     "pull_request_codecommit/__init__.py:__version__",
     "pyproject.toml:version"
 ]
-branch = "main"
 upload_to_pypi = true
 upload_to_release = true
 build_command = "pip install poetry && poetry build"
+
+[tool.semantic_release.commit_author]
+env = "GIT_COMMIT_AUTHOR"
+default = "semantic-release <semantic-release>"
+
+[tool.semantic_release.commit_parser_options]
+allowed_tags = [
+    "build",
+    "chore",
+    "ci",
+    "docs",
+    "feat",
+    "fix",
+    "perf",
+    "style",
+    "refactor",
+    "test",
+]
+minor_tags = ["feat"]
+patch_tags = [
+    "build",
+    "chore",
+    "ci",
+    "docs",
+    "fix",
+    "perf",
+    "style",
+    "refactor",
+    "test",
+]
+
+[tool.semantic_release.remote]
+name = "origin"
+type = "github"
+ignore_token_for_push = false
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
