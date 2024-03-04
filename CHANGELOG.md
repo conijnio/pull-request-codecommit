@@ -2,6 +2,13 @@
 
 
 
+## v0.5.8 (2024-03-04)
+
+### Chore
+
+* chore: enable token again ([`15573c5`](https://github.com/conijnio/pull-request-codecommit/commit/15573c5d0d6f4f8b74806508bcfc928cc95d3fa6))
+
+
 ## v0.5.7 (2024-03-04)
 
 ### Chore
