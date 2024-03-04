@@ -33,7 +33,9 @@ version_variables = [
 ]
 upload_to_pypi = true
 upload_to_release = true
-; build_command = "pip install poetry && poetry build"
+
+[tool.semantic_release.publish]
+upload_to_vcs_release = true
 
 [tool.semantic_release.commit_author]
 env = "GIT_COMMIT_AUTHOR"
