@@ -2,6 +2,13 @@
 
 
 
+## v0.5.6 (2024-03-04)
+
+### Chore
+
+* chore: implement pypi publishing ([`de39102`](https://github.com/conijnio/pull-request-codecommit/commit/de391027ae9f739a4c217d2ecd6e6854bd968db8))
+
+
 ## v0.5.5 (2024-03-04)
 
 ### Chore
