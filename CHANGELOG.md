@@ -2,6 +2,13 @@
 
 
 
+## v0.5.11 (2024-03-04)
+
+### Chore
+
+* chore: enable token ([`1d9f81a`](https://github.com/conijnio/pull-request-codecommit/commit/1d9f81a5c8dc6e64ff6a60ec27f95fa157e68667))
+
+
 ## v0.5.10 (2024-03-04)
 
 ### Fix
