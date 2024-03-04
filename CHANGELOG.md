@@ -2,6 +2,13 @@
 
 
 
+## v0.5.10 (2024-03-04)
+
+### Fix
+
+* fix: add description ([`8bb2e8f`](https://github.com/conijnio/pull-request-codecommit/commit/8bb2e8f96a6761efb43fea080419ea89ea608289))
+
+
 ## v0.5.9 (2024-03-04)
 
 ### Chore
