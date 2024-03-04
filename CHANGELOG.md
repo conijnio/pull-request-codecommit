@@ -2,6 +2,13 @@
 
 
 
+## v0.5.9 (2024-03-04)
+
+### Chore
+
+* chore: disable long_description ([`5df187b`](https://github.com/conijnio/pull-request-codecommit/commit/5df187b14918fce44717d39ae1f6756c6c6aef32))
+
+
 ## v0.5.8 (2024-03-04)
 
 ### Chore
