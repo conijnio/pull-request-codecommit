@@ -13,7 +13,7 @@ setuptools.setup(
     name=project.get("name"),
     version=project.get("version"),
     description=project.get("description"),
-    long_description=long_description,
+    long_description=project.get("description"),
     long_description_content_type="text/markdown",
     author="Joris Conijn",
     author_email="joris@conijnonline.nl",
