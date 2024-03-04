@@ -27,6 +27,7 @@ pull-request-codecommit = "pull_request_codecommit:main"
 git-pr = "pull_request_codecommit:main"
 
 [tool.semantic_release]
+build_command = "pip install poetry && poetry build"
 version_variables = [
     "pull_request_codecommit/__init__.py:__version__",
     "pyproject.toml:version"

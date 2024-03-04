@@ -41,6 +41,9 @@ jobs:
     needs: Quality
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, 'chore(release):')
     runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/pull-request-codecommit
     permissions:
       id-token: write
       contents: write
@@ -51,10 +54,9 @@ jobs:
           fetch-depth: 0
       - name: Python Semantic Release
         uses: python-semantic-release/python-semantic-release@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          repository_username: __token__
-          repository_password: ${{ secrets.PYPI_API_TOKEN }}
+        # with:
+        #   # We are using a GH_TOKEN from the organization
+        #   github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
