@@ -2,6 +2,13 @@
 
 
 
+## v0.5.13 (2024-03-06)
+
+### Chore
+
+* chore: fix license in readme ([`a4ee372`](https://github.com/conijnio/pull-request-codecommit/commit/a4ee3725d9e959a7765c1e33d7a71ede6d46a1f8))
+
+
 ## v0.5.12 (2024-03-04)
 
 ### Chore
