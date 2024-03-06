@@ -1,6 +1,6 @@
 # pull-request-codecommit
 
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE.md)
+[![License](https://img.shields.io/badge/License-Apache2-green.svg)](./LICENSE.md)
 [![Maintenance](https://img.shields.io/badge/Maintained-yes-green.svg)](https://github.com/conijnio/pull-request-codecommit/graphs/commit-activity)
 [![GitHub release](https://img.shields.io/github/release/conijnio/pull-request-codecommit.svg)](https://github.com/conijnio/pull-request-codecommit/releases/)
 [![Continuous Integration](https://github.com/conijnio/pull-request-codecommit/actions/workflows/ci.yml/badge.svg)](https://github.com/conijnio/pull-request-codecommit/actions/workflows/ci.yml)
