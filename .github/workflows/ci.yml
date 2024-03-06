@@ -60,9 +60,14 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Check if PyPi release required
         id: has-dist-folder
-        run: test -d dist
+        run: |-
+          if [ -d ./dist/ ]; then
+            echo "::set-output name=folder_exists::true"
+          else
+            echo "::set-output name=folder_exists::false"
+          fi
       - name: Publish package distributions to PyPI
-        if: steps.has-dist-folder.outputs.return-value == '0'
+        if: steps.has-dist-folder.outputs.folder_exists == 'true'
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
