@@ -2,6 +2,17 @@
 
 
 
+## v0.5.14 (2024-03-06)
+
+### Chore
+
+* chore: automation housekeeping ([`966b41a`](https://github.com/conijnio/pull-request-codecommit/commit/966b41a34c9504d1d8a29821cb09383f2c0bc807))
+
+### Fix
+
+* fix: update dependencies ([`2a3e99a`](https://github.com/conijnio/pull-request-codecommit/commit/2a3e99a8c6f941da1042655ba03a3c3b47019ecc))
+
+
 ## v0.5.13 (2024-03-06)
 
 ### Chore
