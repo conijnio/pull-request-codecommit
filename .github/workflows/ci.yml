@@ -62,9 +62,9 @@ jobs:
         id: has-dist-folder
         run: |-
           if [ -d ./dist/ ]; then
-            echo "::set-output name=folder_exists::true"
+            echo "folder_exists=true" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=folder_exists::false"
+            echo "folder_exists=false" >> $GITHUB_OUTPUT
           fi
       - name: Publish package distributions to PyPI
         if: steps.has-dist-folder.outputs.folder_exists == 'true'
