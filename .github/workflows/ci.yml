@@ -58,8 +58,11 @@ jobs:
         uses: python-semantic-release/python-semantic-release@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check if PyPi release required
+        id: has-dist-folder
+        run: test -d dist
       - name: Publish package distributions to PyPI
-        if: steps.semantic-release.outputs.changed == 'true'
+        if: steps.has-dist-folder.outputs.return-value == '0'
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
