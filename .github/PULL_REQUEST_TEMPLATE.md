@@ -10,6 +10,6 @@
 
 * [ ] Update tests
 * [ ] Update docs
-* [ ] PR title follows [conventional commit semantics](https://www.conventionalcommits.org/en/v1.0.0-beta.2/#commit-message-for-a-fix-using-an-optional-issue-number)
+* [ ] PR title follows [conventional commit semantics](https://www.conventionalcommits.org/en/v1.0.0/)
 
 By submitting this pull request, I confirm that you can use, modify, copy, and redistribute this contribution, under the terms of your choice.

@@ -7,12 +7,16 @@ on:
     branches:
       - main
 
+permissions:
+  id-token: write
+  contents: write
+
 jobs:
   Quality:
     strategy:
       fail-fast: true
       matrix:
-        python-version: [3.8, 3.9, '3.10', 3.11, 3.12]
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
         os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
@@ -44,19 +48,18 @@ jobs:
     environment:
       name: pypi
       url: https://pypi.org/p/pull-request-codecommit
-    permissions:
-      id-token: write
-      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Python Semantic Release
+        id: semantic-release
         uses: python-semantic-release/python-semantic-release@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish package distributions to PyPI
+        if: steps.semantic-release.outputs.changed == 'true'
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}

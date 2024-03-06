@@ -3,7 +3,7 @@ name = "pull-request-codecommit"
 version = "0.5.13"
 description = "pull-request-codecommit creates a PR within CodeCommit based on your commit messages."
 authors = ["Joris Conijn <joris@conijnonline.nl>"]
-license = "MIT"
+license = "Apache2"
 readme = "README.md"
 
 [tool.poetry.dependencies]
@@ -27,6 +27,25 @@ radon = "^6.0.1"
 pull-request-codecommit = "pull_request_codecommit:main"
 git-pr = "pull_request_codecommit:main"
 
+[tool.pytest]
+testpaths = "tests"
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.coverage.run]
+branch = true
+source = ["pull_request_codecommit"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 100
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "@abstract"
+]
+
 [tool.semantic_release]
 build_command = "pip install poetry && poetry build"
 version_variables = [
@@ -36,8 +55,8 @@ version_variables = [
 
 [tool.semantic_release.commit_parser_options]
 allowed_tags = [ "build", "chore", "ci", "docs", "feat", "fix", "perf", "style", "refactor", "test" ]
-minor_tags = ["feat"]
-patch_tags = [ "chore", "docs", "fix", "perf", "style", "refactor", "test" ]
+minor_tags = [ "feat" ]
+patch_tags = [ "fix", "perf", "refactor" ]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
