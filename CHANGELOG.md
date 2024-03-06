@@ -2,6 +2,13 @@
 
 
 
+## v0.5.15 (2024-03-06)
+
+### Fix
+
+* fix: trigger new release ([`da162ec`](https://github.com/conijnio/pull-request-codecommit/commit/da162ecc44dbd57e0891a49ed8f6a6a6883a4ba4))
+
+
 ## v0.5.14 (2024-03-06)
 
 ### Chore
