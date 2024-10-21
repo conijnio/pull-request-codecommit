@@ -1486,17 +1486,17 @@ zstd = ["zstandard (>=0.18.0)"]
 
 [[package]]
 name = "xenon"
-version = "0.9.1"
+version = "0.9.2"
 description = "Monitor code metrics for Python on your CI server"
 optional = false
 python-versions = "*"
 files = [
-    {file = "xenon-0.9.1-py2.py3-none-any.whl", hash = "sha256:b2888a5764ebd57a1f9f1624fde86e8303cb30c686e492f19d98867c458f7870"},
-    {file = "xenon-0.9.1.tar.gz", hash = "sha256:d6745111c3e258b749a4fd424b1b899d99ea183cea232365ee2f88fe7d80c03b"},
+    {file = "xenon-0.9.2-py2.py3-none-any.whl", hash = "sha256:19e5ed35dccf93f15d2e5f68a3d117b195d10e9323ef5e6982c287798d5b0b6d"},
+    {file = "xenon-0.9.2.tar.gz", hash = "sha256:1d62ae605dbb437afc3f7a741ff4f463da7c7ac0d4ce1f52e5b58b9bb1459f1d"},
 ]
 
 [package.dependencies]
-PyYAML = ">=4.2b1,<7.0"
+PyYAML = ">=5.0,<7.0"
 radon = ">=4,<7"
 requests = ">=2.0,<3.0"
 
@@ -1518,4 +1518,4 @@ test = ["big-O", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more-it
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "508f64ed2c4ce683afc19c9f8c9c726639784b3684823591a02dd4c40759eb4c"
+content-hash = "232307cf1238a1e36ea223a477da9111f04d3841f1c0ee099eaec536ee410022"
