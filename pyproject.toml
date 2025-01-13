@@ -9,7 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.8"
 click = "^8.0.3"
-python-semantic-release = "9.15.2"
+python-semantic-release = "9.16.1"
 
 [tool.poetry.dev-dependencies]
 black = "^24.8"
